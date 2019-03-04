@@ -1,0 +1,104 @@
+  <div class="Refresh" url="{:$_SERVER['REQUEST_URI']}"></div>
+  <div class="col-xs-6 col-md-4">
+  <h4><span class="yuandian_red"></span>新任务</h4>
+  <div class="renwu_list_content">
+    <ul>
+    <empty name="newtask">
+    <li>暂无！</li>
+    <else/>
+    <volist name="newtask" id="nt">
+      <li class="renwu_name_nav">
+      <div class="div_list_title" data-id="{$nt.id}"><span></span><div class="title-task-h">{$nt.title}<if condition="$nt['t_status'] LT 1"><em style="font-size: 12px;color: #F00;">（待审批）</em></if></div><i class="iconfont">&#xe63c;</i></div>
+      
+      <ul style="position: relative;">
+        <li><span>要求完成时间：</span>{$nt.enddt|enddt_time}</li>
+        <li><span>申请人：</span>{$nt.applyid|get_nickname}</li>
+        <li><span>等  级：</span>{$nt.level|level_Meaning}</li>  
+        <div style="position: absolute;right: 15px;top: 20px;">
+            <if condition="TF_explode_value(UID,$nt['dist']) EQ true AND $nt['t_status'] EQ 1"><a class="btn btn-success btn-xs" href="javascript:Get_mytask(2,'{:U('Task/get_mytask?tid='.$nt['id'])}');">领取任务</a></if>
+            <if condition="TF_explode_value(UID,$nt['leaderid']) EQ true AND $nt['t_status'] LT 1"><a class="btn btn-success btn-xs" href="javascript:addModal('{:U('Task/examine',array('id'=>$nt['id'],'jur'=>2))}');">审批</a>  </if>
+            <if condition="TF_explode_value(UID,C('FILE_MANS')) EQ true AND $nt['t_status'] EQ 5">
+              <button type="button" url-type="2" class="btn btn-success ajax-get right confirm" url="{:U('Task/Todofile?id='.$nt['id'])}">
+                    归档
+              </button>
+              </if>
+        </div>               
+      </ul></li>
+      </volist>
+      </empty>
+    </ul>
+  </div>
+  </div>
+  <div class="col-xs-6 col-md-4">
+    <h4><span class="yuandian_qing"></span>进行中任务</h4>
+  <div class="renwu_list_content">
+    <ul>
+    <empty name="ongoingtask">
+    <li>暂无！</li>
+    <else/>
+    <volist name="ongoingtask" id="ongo">
+      <li class="renwu_name_nav">
+      <div class="div_list_title qing"  data-id="{$ongo.id}"><span></span><div class="title-task-h">{$ongo.title}</div><i class="iconfont">&#xe63c;</i></div>
+      <ul style="position: relative;">
+        <li><span>要求完成时间：</span>{$ongo.enddt|enddt_time}</li>
+        <li><span>申请人：</span>{$ongo.applyid|get_nickname}</li>
+        <li><span>等  级：</span>{$ongo.level|level_Meaning}</li> 
+        <div style="position: absolute;right: 15px;top: 20px;">
+        <a class="btn btn-success btn-xs" href="javascript:addModal('{:U('Task/taskResult',array('id'=>$ongo['id'],'jur'=>2))}');">反馈结果</a>
+        </div>                   
+      </ul></li>
+      </volist>
+      </empty>
+    </ul>
+  </div>
+  </div>
+  <div class="col-xs-6 col-md-4">
+    <h4><span class="yuandian_yellow"></span>已完成任务</h4>
+                <div class="renwu_list_content">
+    <ul>
+    <empty name="donetask">
+    <li>暂无！</li>
+    <else/>
+      <volist name="donetask" id="val">
+      <li class="renwu_name_nav">
+      <div class="div_list_title yellow" data-id="{$val.id}"><span></span><div class="title-task-h">{$val.title}</div><i class="iconfont">&#xe63c;</i></div>
+      <ul>
+        <li><span>要求完成时间：</span>{$val.enddt|enddt_time}</li>
+        <li><span>申请人：</span>{$val.applyid|get_nickname}</li>
+        <li><span>等  级：</span>{$val.level|level_Meaning}</li>                    
+      </ul></li>
+      </volist>
+      </empty>
+    </ul>
+  </div>
+  </div>
+<script type="text/javascript">
+  $(function(){
+    var tasklist_h=$(window).height()-344;
+    $(".renwu_list_content").height(tasklist_h);//初始任务列表背景高度
+  });
+
+  var TimeFO = null;
+  $("#tabs_main_0").find('.div_list_title').click(function () {
+      $(this).addClass('clickhover').parent().siblings().find('.div_list_title').removeClass('clickhover');      
+      clearTimeout(TimeFO);
+      var thisdoc=$(this).parent().find('ul');
+      var iconstyle=$(this).find('i');
+      TimeFO = setTimeout(function(){
+        if(!thisdoc.hasClass('showul')){
+          thisdoc.addClass('showul');
+          iconstyle.html('&#xe63a;');
+        }else{
+          thisdoc.removeClass('showul');
+          iconstyle.html('&#xe63c;');
+        }
+      },200);
+  });
+
+  $("#tabs_main_0").find('.div_list_title').dblclick(function () {
+      clearTimeout(TimeFO);
+      var tid=$(this).attr('data-id');
+      var url="{:U("Task/task_detail","",false)}"+"/id/"+tid+'/type/4';
+      addModal(url);
+  });
+</script>

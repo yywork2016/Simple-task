@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <title>菜单</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	<style>
+		html,body {height: 100%;background:#5f6d93;color: #fff;font-size: 16px;padding:0;margin:0;}
+        #topbar{width: 48%;padding-bottom: 15px;}
+        #menulist{margin-top: 15px;}
+        #menulist .aui-list .aui-list-item{background-color:none;}
+        #menulist li{line-height: 43px;background:url(../image/menu_line.png) left bottom repeat-x;padding-left: 15px;}
+        .imgsize-cover{width: 50%;margin:0 auto;padding:1px;border:1px solid #5a6684;-webkit-box-shadow: 0 0 10px #39435c; -moz-box-shadow: 0 0 10px #39435c; box-shadow: 0 0 10px #39435c;}
+        .menu-linebottom,.menu-linetop{height: 1px;position: relative;}
+        .line_nav{width: 100%;background:url(../image/menu_line.png) repeat-x;height: 2px;}
+        #username{text-align: center;font-size: 15px;margin-top: 5px;}
+        #menulist i{font-size: 16px;color: #40edc0;font-weight: bold;margin-right: 8px;}
+	</style>
+</head>
+<body>
+<div style="width: 100%;background-color: #68769a;display: block;padding-top: 15px;">
+<section id="topbar">
+ <img src="../image/cover.jpg" id="el_cover" class="aui-img-round imgsize-cover">
+ <h1 id="username">TASK</h1>
+</section>
+</div>
+<div class="line_nav"></div>
+
+<div id="menulist">
+<div class="aui-content aui-margin-b-15">
+    <ul>
+        <li class="aui-list-item" onclick="openNewWin('createtask');">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title"><i class="aui-iconfont aui-icon-edit"></i> 创建任务</div>
+        </li>
+        <li class="aui-list-item" onclick="openNewWin('tasklist');">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title"><i class="aui-iconfont aui-icon-calendar"></i> 我创建的任务</div>
+        </li>
+        <li class="aui-list-item" onclick="openNotice();">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title"><i class="aui-iconfont aui-icon-flag"></i> 提醒信息</div>
+            </div>
+        </li>
+    </ul>
+</div>
+</div>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+apiready = function(){
+    getCover();
+}
+    
+	function closeSlide (){
+		api.closeSlidPane();
+	}
+	
+    function openNewWin (type) {
+		api.openWin ({
+			name: type,
+			url: 'task/'+type+'.html',
+			rect:{
+				x:0,
+				y:0,
+				w:'auto',
+				h:'auto'
+			},
+			bounces: false,
+			delay:200,
+			animation: {
+				type: 'movein'
+			}
+		});
+       // closeSlide ();
+    }
+
+    function openNotice(){
+        api.openWin ({
+            name: 'notice',
+            url: 'notice/index.html'
+        });
+    }
+
+    function getCover(){
+        var imgcover=$api.byId("el_cover");
+        api.ajax({
+                url: OpenAPI.getCover,
+                method: 'post',
+                dataType: 'JSON',
+            }, function(ret, err) {
+                if (ret) {
+                    $api.attr(imgcover,'src',ret.cover); 
+                    $api.text($api.byId('username'),ret.username);   
+                } else {
+                    api.toast({ msg: JSON.stringify(err) });
+                }
+            });
+    }
+	
+</script>
+</html>

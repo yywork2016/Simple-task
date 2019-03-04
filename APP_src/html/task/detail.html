@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+</head>
+<body>
+<div id="detail-content">
+<!-- one -->
+<div class="detail-startcontent">
+<div class="task-head">
+    <div class="coverleft"><img src="../../image/cover.jpg" id="el_cover">
+    <p id="nickname">TASK</p>
+    </div>
+    <div class="task-head-right">
+        <h2 id="tasktitle">任务标题<span>[开发]</span></h2>
+        <p id="addtime">反馈时间：2017-1-1</p>
+        <p id="endtime">要求完成时间：2017-1-1</p>
+        <p id="level"></p>
+    </div>
+</div>
+    <div class="navlinespace"></div>
+    <div class="task-contents">
+       <p id="taskdetail" style="word-wrap: break-word;min-height: 50px;"></p>
+    <div class="navlinespace" id="button-line" style="display: none;"></div>
+        <div style="float: right;clear: left;" id="showbuttons">
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>
+
+<section class="aui-chat" style="padding: 0px;padding-top: 8px;">
+</section>
+
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        //监听向右滑动关闭当前页
+        api.addEventListener({
+            name:'swiperight'
+        }, function(ret, err){        
+            api.closeWin();
+        });
+
+        var id=api.pageParam.id;
+        // api.alert({msg:id});
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: '#5f6d93',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            showdetail(id);
+            api.refreshHeaderLoadDone();
+        });
+
+        showdetail(id);
+
+    }
+
+    function showdetail(id){
+    // 开始加载
+    api.showProgress();
+    api.ajax({
+        url: OpenAPI.taskdetail,
+        method: 'post',
+        dataType: 'JSON',
+        data: {
+            values: {
+                id: id
+                }
+            }
+        }, function(ret, err) {
+        if (ret) {
+
+            if(ret.status==1){
+                var info=ret.info;
+                var chatlist='<div class="aui-chat-header">任务处理记录</div>';
+                var icontent='';
+                var icontent=info.content;
+
+                $api.attr($api.byId("el_cover"),'src',info.cover);
+                $api.html($api.byId("tasktitle"),info.title+"<span>["+info.type+"]</span>");
+                $api.html($api.byId("taskdetail"),icontent.replace(/\n/g, "<br/>"));
+                $api.text($api.byId("nickname"),info.nickname);
+                $api.html($api.byId("addtime"),"反馈时间："+info.addtime);
+                $api.html($api.byId("endtime"),"要求完成时间："+info.endtime);
+                $api.html($api.byId("level"),info.level);
+                $api.html($api.byId("showbuttons"),info.sbutton);
+                if(info.sbutton != ''){
+                    $api.css($api.byId("button-line"),'display:block');
+                }
+                var clist=ret.chatlist;
+                if(ret.chatlist != null){                    
+                    for(var i=0;i<clist.length;i++){              
+                        chatlist +='<div class="aui-chat-item aui-chat-left">';
+                        chatlist +='<div class="aui-chat-media">';
+                        chatlist +='<img src="'+clist[i].cover+'" />';
+                        chatlist +='</div>';
+                        chatlist +='<div class="aui-chat-inner">';
+                        chatlist +='<div class="aui-chat-name">'+clist[i].nickname+'   '+clist[i].ctime+' <span class="aui-label aui-label-warning">'+clist[i].chatname+'</span></div>';
+                        chatlist +='<div class="aui-chat-content">';
+                        chatlist +='<div class="aui-chat-arrow"></div>';
+                        chatlist +=clist[i].content+'</div>';
+                        chatlist +='</div></div>';
+                    }
+
+                    $api.html($api.dom(".aui-chat"),chatlist);
+                }
+
+            }else{
+               api.alert({msg:ret.info}); 
+            }
+            // 加载结束
+            api.hideProgress();
+        } else {
+            api.alert({ msg: JSON.stringify(err) });
+        }
+    });
+
+    }
+
+
+
+</script>

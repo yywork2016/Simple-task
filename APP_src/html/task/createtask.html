@@ -1,0 +1,445 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>TASK</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+</head>
+<body style="background:#eaebec;height: 100%;position:relative;">
+    <header class="aui-bar aui-bar-nav" id="topbar" style="background:#5f6d93;">
+    <div class="aui-pull-left aui-btn" onclick="goback()">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </div>
+    <div class="aui-title" id="taskcategory">创建任务</div>
+    <a class="aui-pull-right aui-btn" onclick="savetask()">
+        提交
+    </a>
+    </header>
+<form name="USER">
+<div class="aui-content aui-margin-b-15 task-member-list">
+    <ul class="aui-list aui-list-in">
+    <li class="aui-list-header" style="height: 10px;"></li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    任务名称
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="title" placeholder="任务名称">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">反馈类型</div>
+                    <div class="aui-list-item-input setlable">
+                    <label class="aui-margin-r-5"><input type="checkbox" name="type" value="生产" class="aui-checkbox">生产</label>
+                    <label class="aui-margin-r-5"><input type="checkbox" name="type" value="客户" class="aui-checkbox">客户</label>
+                    <label class="aui-margin-r-5"><input type="checkbox" name="type" value="开发" class="aui-checkbox">开发</label>
+                    <label><input type="checkbox" name="type" value="自主" class="aui-checkbox">自主</label>
+                </div>
+                </div>
+            </li>
+
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    反馈时间
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="startdt" placeholder="反馈时间" readonly="readonly" onclick="calendar('startdt')">
+                </div>
+            </div>
+        </li>
+
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    完成时间
+                </div>
+                <div class="aui-list-item-input">
+                <input type="text" name="enddt" placeholder="完成时间" readonly="readonly" onclick="calendar('enddt')">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header" style="height: 10px;"></li>
+
+        <li class="aui-list-item" style="height: 100px;">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        任务说明
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="任务说明" name="content" style="height: 90px;"></textarea>
+                    </div>
+                </div>
+        </li>
+
+        <li class="aui-list-header" style="height: 10px;"></li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    任务接收人
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="distname" placeholder="任务接收人" readonly="readonly" onclick="getusers('dist','distname')">
+                    <input type="hidden" name="dist">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    确定(测试)人
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="testmanname" placeholder="确定(测试)人" readonly="readonly" onclick="getusers('testman','testmanname')">
+                    <input type="hidden" name="testman">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header" style="height: 10px;"></li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    等级
+                </div>
+                <div class="aui-list-item-input">
+                    <select name="level">
+                        <option value="1">紧急</option>
+                        <option value="2">高</option>
+                        <option value="3">中</option>
+                        <option value="4">低</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<input type="hidden" name="id">
+</form>
+<div id="calendar-ym" style="display: none;">
+    <header class="aui-bar aui-bar-nav" style="background:#5f6d93;">
+    <div class="aui-pull-left aui-btn" onclick="fnClose()">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </div>
+    <div class="aui-title"></div>
+    </header>
+    <div class="calstart">
+<span class="fnPrevMonth" onclick="fnPrevMonth()">上一月</span>
+<span class="yearmonth">2017-1</span>
+<span class="fnNextMonth" onclick="fnNextMonth()">下一月</span>
+</div>  
+</div>
+
+
+
+<div id="getuser" style="display: none;">
+    <header class="aui-bar aui-bar-nav" style="background:#5f6d93;">
+    <div class="aui-pull-left aui-btn" onclick="gobacktotask()">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </div>
+    <div class="aui-title">选择</div>
+    <a class="aui-pull-right aui-btn" id="choiceUser" onclick="">
+        确定
+    </a>
+    </header>
+    <form id="userform">
+    <ul class="userlist">
+    </ul>
+    </form>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var UICalendar;
+	apiready = function () {
+	    //监听向右滑动关闭当前页
+	    api.addEventListener({
+	        name:'swiperight'
+	    }, function(ret, err){        
+	        api.closeWin();
+	    });
+
+        var id=api.pageParam.id;
+
+        if(id){
+            // 开始加载
+            api.showProgress();
+            $api.text($api.byId("taskcategory"),"编辑任务");
+            api.ajax({
+            url: OpenAPI.taskinfo,
+            dataType:'json',
+            method: 'post',
+            data: {
+                values: {
+                    id: id
+                }
+            }
+            }, function(ret, err) {
+                if (ret) {
+                    CheckLogin(ret.loginout);
+                    if(ret.status==1){
+                        var info=ret.info;
+                        $api.val($api.dom("input[name=id]"),id);
+                        $api.val($api.dom("input[name=title]"),info.title);
+                        if(info.typelist != ''){
+                            var types=info.typelist;
+                            for (var i=0; types.length>i;i++) {
+                                $api.attr($api.dom("input[name=type][value="+types[i]+"]"),"checked", true);
+                            }
+                        }
+                        $api.val($api.dom("input[name=startdt]"),info.startdt);
+                        $api.val($api.dom("input[name=enddt]"),info.enddt);
+                        $api.val($api.dom("textarea[name=content]"),info.content);
+                        $api.val($api.dom("input[name=dist]"),info.dist);
+                        $api.val($api.dom("input[name=distname]"),info.distname);
+                        $api.val($api.dom("input[name=testman]"),info.testman);
+                        $api.val($api.dom("input[name=testmanname]"),info.testmanname);
+                        $("select[name=level]").find('option[value="'+info.level+'"]').attr("selected",true);
+                    }else{
+                        api.alert({msg:ret.info});
+                    }
+
+                } else {
+                    api.alert({ msg: JSON.stringify(err) });
+                }
+            });
+            // 加载结束
+            api.hideProgress();
+        }else{         
+            var now=new Date();
+            var year=now.getFullYear();
+            var month=now.getMonth()+1;
+            var day=now.getDate();
+            $("input[name=startdt]").val(year+'-'+month+'-'+day);
+        }
+        UICalendar = api.require('UICalendar');       
+
+    }
+function goback(){
+    api.closeWin();
+}
+
+
+function calendar(dtname){
+    $("#calendar-ym").css('display','block').slideDown();
+    // $api.css($api.dom(""),'display:block');
+    var headerPos = $api.offset( $api.dom('#topbar') );
+    var calendarym = $api.offset( $api.dom('#calendar-ym') );
+
+    UICalendar.open({
+    rect: {
+        x: 0,
+        y: calendarym.h,
+        w: api.frameWidth,
+        h: api.frameHeight
+    },
+    styles: {
+        bg: '#fff',
+        week: {
+            weekdayColor: '#3b3b3b',
+            weekendColor: '#a8d400',
+            size: 14
+        },
+        date: {
+            color: '#3b3b3b',
+            selectedColor: '#fff',
+            selectedBg: '#a8d500',
+            size: 14
+        },
+        today: {
+            color: 'rgb(230,46,37)',
+            bg: ''
+        },
+        specialDate: {
+            color: '#fff'
+        }
+    },
+    specialDate: [{
+        date: '2015-06-01'
+    }],
+    switchMode: 'horizontal',
+    fixedOn: api.frameName,
+    fixed: false
+}, function(ret, err) {
+    if (ret) {
+        $api.text($api.dom(".yearmonth"),ret.year+' 年 '+ret.month+' 月');
+        // alert(JSON.stringify(ret));
+        if(ret.eventType=='normal'){
+            var values=ret.year+'-'+ret.month+'-'+ret.day;
+            if(dtname=='enddt'){
+                var startdt=$("input[name=startdt]").val();
+                if(startdt>values){
+                    api.toast({msg:'完成时间不能小于反馈时间！'});
+                    return false;
+                }
+            }            
+            $('input[name='+dtname+']').val(values);
+            fnClose();
+        }
+
+    } else {
+        alert(JSON.stringify(err));
+    }
+});
+
+}
+function fnNextMonth(){
+    UICalendar.nextMonth(function(ret, err){      
+        if( ret ){
+            $api.text($api.dom(".yearmonth"),ret.year+' 年 '+ret.month+' 月');
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+}
+
+function fnPrevMonth(){
+    UICalendar.prevMonth(function(ret, err){      
+        if( ret ){
+            $api.text($api.dom(".yearmonth"),ret.year+' 年 '+ret.month+' 月');
+        }else{
+            alert( JSON.stringify( err ) );
+        }
+    });
+}
+function fnClose(){
+    // $api.css($api.dom("#calendar-ym"),'display:none');
+    $("#calendar-ym").slideUp();
+    UICalendar.close();
+}
+
+// 选择用户
+function getusers(strid,strname){
+    // 开始加载
+  api.showProgress();
+  var userhtml='';
+    $("#getuser").slideDown();
+    $api.html($api.dom('.userlist'),'');
+    // $api.css($api.byId('getuser'),'display:block');
+    $api.attr($api.byId('choiceUser'),'onclick','choiceUser("'+strid+'","'+strname+'")');
+        
+    api.ajax({
+    url: OpenAPI.getusers,
+    method: 'post',
+    dataType: 'json'
+     },function(ret,err){
+        // 加载结束
+        api.hideProgress();
+        CheckLogin(ret.loginout);
+          var info=ret.info;
+          if(ret.status==1){
+            var infolist=ret.info;
+            for(var i=0;i<infolist.length;i++){           
+              userhtml +='<li><label><span class="usercover"><img src="'+infolist[i].usercover+'" class="aui-img-round"></span><span class="usernames">'+infolist[i].nickname+'<span>（'+infolist[i].jobs+'）</span></span>';
+              userhtml +='<span class="checkboxs"><input type="checkbox" xname="'+infolist[i].nickname+'" name="userids" value="'+infolist[i].id+'" class="aui-checkbox"></span></label></li>';
+            }
+            $api.html($api.dom('.userlist'),userhtml);                 
+          }else if(err){
+              api.toast({msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)});
+          }else{
+            api.alert({msg : info});
+          }
+     });
+
+}
+
+function gobacktotask(){
+    $("#getuser").slideUp();
+}
+
+// 选择用户
+function choiceUser(strid,strname){
+    var s=''; 
+    var h='';
+    var xname,o1;
+    var obj=$api.domAll('input[name=userids]');
+    for(var i=0; i<obj.length; i++){ 
+        o1 = $(obj[i]);
+        if(obj[i].checked){
+            xname= o1.attr('xname');
+            s+=','+obj[i].value; //如果选中，将value添加到变量s中 
+            h+=','+xname;
+        }
+    }
+    s=s.substr(1);
+    h=h.substr(1);
+    if(s=='' || h==''){
+        api.alert({msg:"请选择用户！"});
+        return false;
+    }    
+    if(strid=='undefined' && strname=='undefined'){
+        api.alert({msg:"出错！"});
+        return false;
+    }else{
+        $("input[name="+strname+"]").val(h);
+        $("input[name="+strid+"]").val(s);
+    }
+
+    gobacktotask();
+}
+
+// 保存任务
+function savetask(){
+    var s='';
+    var taskid=$api.val($api.dom("input[name=id]"));
+    var types=$api.domAll("input[name=type]");
+    for(var i=0; i<types.length; i++){ 
+        if(types[i].checked){
+            s+=','+types[i].value; //如果选中，将value添加到变量s中 
+        }
+    }
+    s=s.substr(1);
+
+    api.ajax({
+    url: OpenAPI.createtask,
+    method: 'post',
+    dataType: 'json',
+    data:{
+        values: {
+            id: taskid,
+            title: $api.val($api.dom("input[name=title]")),
+            type: s,
+            startdt: $api.val($api.dom("input[name=startdt]")),
+            enddt: $api.val($api.dom("input[name=enddt]")),
+            content: $api.val($api.dom("textarea[name=content]")),
+            dist: $api.val($api.dom("input[name=dist]")),
+            testman: $api.val($api.dom("input[name=testman]")),
+            level: $api.val($api.dom("select[name=level]"))
+        }
+    }
+     },function(ret,err){
+        CheckLogin(ret.loginout);
+          var info=ret.info;
+          if(ret.status==1){
+            api.toast({msg:info});
+            if(taskid != ''){
+                var jsfun = 'showtasklist();';
+                api.execScript({
+                    name: 'tasklist',
+                    frameName: 'mytask',
+                    script: jsfun
+                });
+            }
+            setTimeout(function(){
+                goback();
+            },2000);          
+          }else if(err){
+              api.toast({msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)});
+          }else{
+            api.alert({msg : info});
+          }
+     });
+
+}
+
+</script>

@@ -1,0 +1,45 @@
+<div class="modal fade bs-example-modal-sm" id="TaskTest" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px;">
+        <button type="button" class="close" onclick="CloseModal(this)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" style="line-height: 20px;" id="myModalLabel">{$info.task_id|Get_Task_Title}<br/><small style="color: #FFF;line-height: 16px;font-size: 12px;">（确认/测试反馈结果）</small></h4>
+      </div>
+      <div class="modal-body">  
+        <form role="form" action="{:U('Task/task_test')}" method="post" class="form-tasktest">
+        <input type="hidden" name="resu_id" value="{$info.id}">
+        <input type="hidden" name="task_id" value="{$info.task_id}">
+        <input type="hidden" name="touid" value="{$info.uid}">
+        <div class="row main">
+            <div class="form-group">
+              <label for="2"><span class="mustinput">*</span>任务反馈：{$info.uid|get_nickname}</label>
+            </div>
+            <div class="form-group">
+              <label for="2"><span class="mustinput">*</span>请选择</label>
+              <br/>
+              <label class="radio-inline">
+                <input type="radio" name="test_status" id="test_status" value="1" checked="checked"> 通过
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="test_status" id="test_status" value="0" > 不通过
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="nickname"><span class="mustinput">*</span>备注</label>
+              <textarea id="test_content" name="test_content" placeholder="请输入备注" rows="3" class="form-control"></textarea>
+            </div>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick="CloseModal(this)"><i class="iconfont">&#xe619;</i> 关 闭 </button>
+        <button type="submit" url-type="{:I('get.jur')}" class="btn btn-danger ajax-post " id="submit" target-form="form-tasktest"><i class="iconfont">&#xe60a;</i> 保 存 </button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+  $(function(){
+    $('#TaskTest').modal('toggle');
+  });
+</script>
+</div>

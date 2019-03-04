@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>CHS</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+</head>
+<body style="background:#eaebec;height: 100%;position:relative;">
+    <header class="aui-bar aui-bar-nav" id="topbar" style="background:#5f6d93;">
+    <div class="aui-pull-left aui-btn" onclick="goback()">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </div>
+    <div class="aui-title">个人资料</div>
+    <a class="aui-pull-right aui-btn" onclick="edituser()">
+        提交
+    </a>
+    </header>
+<form name="USER">
+<div class="aui-content aui-margin-b-15 task-member-list">
+    <ul class="aui-list aui-list-in">
+    <li class="aui-list-header" style="height: 15px;"></li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    姓名
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="username" placeholder="姓名">
+                </div>
+            </div>
+        </li>
+
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    用户名
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="nickname" placeholder="用户名">
+                </div>
+            </div>
+        </li>
+
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    性别
+                </div>
+                <div class="aui-list-item-input">
+                    <select name="sex">
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header" style="height: 15px;"></li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    职位
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="jobs" placeholder="职位">
+                </div>
+            </div>
+        </li>
+
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    手机号码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="phone" placeholder="手机号码">
+                </div>
+            </div>
+        </li>
+
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    邮箱
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="email" placeholder="邮箱">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header" style="height: 15px;"></li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    QQ
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="text" name="qq" placeholder="QQ">
+                </div>
+            </div>
+        </li>
+
+    </ul>
+</div>
+<input type="hidden" name="id">
+</form>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+	apiready = function () {
+        // 开始加载
+        api.showProgress();
+	    //监听向右滑动关闭当前页
+	    api.addEventListener({
+	        name:'swiperight'
+	    }, function(ret, err){        
+	        api.closeWin();
+	    });
+
+
+        // 获取服务器个人信息
+        api.ajax({
+            url: OpenAPI.memberinfo,
+            method: 'post',
+            dataType: 'JSON',
+        }, function(ret, err) {
+            if (ret) {
+                CheckLogin(ret.loginout);
+                $api.val($api.dom("input[name=id]"),ret.id);
+                $api.val($api.dom("input[name=username]"),ret.username);
+                $api.val($api.dom("input[name=nickname]"),ret.nickname);
+                $("select[name=sex]").find("option[value="+ret.sex+"]").attr("selected",true);
+                $api.val($api.dom("input[name=jobs]"),ret.jobs);
+                $api.val($api.dom("input[name=phone]"),ret.phone);
+                $api.val($api.dom("input[name=email]"),ret.email);
+                $api.val($api.dom("input[name=qq]"),ret.qq);
+                // 加载结束
+                api.hideProgress();
+            } else {
+                api.alert({ msg: JSON.stringify(err) });
+            }
+        });
+
+    }
+function goback(){
+    api.closeWin();
+}
+
+function edituser(){
+    api.ajax({
+        url: OpenAPI.edituser,
+        dataType:'json',
+        method: 'post',
+        data: {
+            values: {
+                id: $api.val($api.dom("input[name=id]")),
+                username: $api.val($api.dom("input[name=username]")),
+                nickname: $api.val($api.dom("input[name=nickname]")),
+                sex: $api.val($api.dom("select[name=sex]")),
+                jobs: $api.val($api.dom("input[name=jobs]")),
+                phone: $api.val($api.dom("input[name=phone]")),
+                qq: $api.val($api.dom("input[name=qq]")),
+                email: $api.val($api.dom("input[name=email]"))
+            }
+        }
+    }, function(ret, err) {
+        if (ret) {
+            CheckLogin(ret.loginout);
+            api.toast({
+                msg: ret.info,
+                duration: 2000,
+                location: 'middle'
+            });       
+        } else {
+            api.alert({ msg: JSON.stringify(err) });
+        }
+    });
+}
+
+</script>

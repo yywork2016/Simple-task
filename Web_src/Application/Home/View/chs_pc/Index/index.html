@@ -1,0 +1,157 @@
+<include file="Public/head"/>
+<div class="topheader">
+<div class="container-fluid">
+<div class="row">
+  <div class="col-md-2">{:C('WEB_SITE_TITLE')}</div>
+  <div class="col-md-7">
+      <ul class="topmenu_list">          
+        <volist name="topmenu" id="tmu">
+        <li data-url="{:U('AuthRule/getMenu')}" data-id="{$tmu.id}"><notempty name="tmu['icon']"><i class="iconfont">{$tmu.icon}</i></notempty> {$tmu.title}</li>
+        </volist>
+      </ul>
+  </div>
+  <div class="col-md-3">
+      <div class="navbar-right dropdown-user-mess">
+            <a href="javascript:;" class="my_area dropdown" id="dropdownMenu1" data-toggle="dropdown"><img src="{:User_Cover(UID)}" class="img-circle"> 你好，{:get_nickname(UID)}（{:get_username(UID)}）！ <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+              <li><a href="javascript:addModal('{:U('Users/resetpassword',array('jur'=>1))}');"><span class="glyphicon glyphicon-eye-open"></span>修改密码</a></li>
+              <li><a href="javascript:addModal('{:U('Users/setcover',array('jur'=>5))}');"><i class="iconfont">&#xe647;</i>修改头像</a></li>
+              <if condition="UID EQ C('USER_ADMINISTRATOR')">
+              <li><a href="{:U('Public/Clear_Runtime')}" class="ajax-get"><i class="iconfont">&#xe600;</i>清除缓存</a></li>
+              </if>
+              <li role="presentation" class="divider"></li>
+              <li><a class="ajax-get" url-type="1" href="{:U('Public/logout')}"><i class="iconfont">&#xe6f7;</i>退出</a></li>
+            </ul>
+      </div>
+  </div>
+</div>
+</div>
+</div>
+<table width="100%" cellspacing="0" cellpadding="0" border="0" id="table_content">
+  <tr>
+    <td width="190" valign="top">
+      <div id="indexmenu" class="menubg fixed">
+      <div class="menutoptext">
+        <ul>
+          <li class="li01"><div id="menulisttop" style="font-size:16px;padding-left:10px"></div></li>
+          <li class="li02"><div style="text-align:right;padding-right:10px"><i id="indesearchmenu" class="icon-search cursor"></i>&nbsp; &nbsp;<i id="reordershla" class="icon-reorder cursor"></i></div></li>
+        </ul>
+      </div>
+      <div id="menulist" style="overflow: auto;"></div>
+    </div>
+    </td>
+    <td valign="top">
+    <div id="top-alert" class="fixed alert alert-error" style="display: none;">
+      <button class="close" style="position: absolute;right: 10px;top: 13px;color: #fff;">&times;</button>
+      <div class="alert-content">这是内容</div>
+    </div>
+    <div id="tabsindexm" class="tabsindex">
+      <table cellspacing="0" cellpadding="0" border="0">
+          <tbody>
+          <tr id="tabs_title">
+            <td temp="0" class="accive" onclick="changetabs(this,0)" id="tabs_0"><i class="iconfont">&#xe60c;</i>  首页</td>
+          </tr>
+          </tbody>
+      </table>
+    </div>
+
+    <div id="content_allmainview" class="main">
+    <div class="main_content" id="tabs_main_0" temp="0">
+          <h2 class="sub-header">任务<em style="font-size: 12px;color: #f00;">（注：鼠标双击任务标题即可查看详情）</em></h2>
+          <div class="renwu_content">
+            <div class="type_chuage_nav">
+            <a href="javascript:;" onclick="Get_main_task(this,'{:U('main?type=1')}')" class="hover">全部</a> 
+            <a href="javascript:;" onclick="Get_main_task(this,'{:U('main?type=2')}')">本月</a> 
+            <a href="javascript:;" onclick="Get_main_task(this,'{:U('main?type=3')}')">本周</a> 
+            </div>
+            <div class="row" id="main-list-task"></div>
+          </div>
+    </div>
+    </div>
+
+    <div class="panel panel-warning" id="tishidivshow" style="display: none;">
+        <div class="panel-heading">
+          <h3 class="panel-title"><span class="glyphicon glyphicon-bell" aria-hidden="true"></span> 系统提醒 <span class="glyphicon glyphicon-remove right closetishi" aria-hidden="true"></span></h3>
+        </div>
+        <div class="panel-body">
+            <!-- 这里是提醒内容 -->
+        </div>
+    </div>
+
+    <div class="footer">简单任务系统 BetaV1.00</div>
+    </td>
+  </tr>
+</table>
+
+<script src="__JS__/jquery.min.js"></script>
+<script src="__JS__/bootstrap.min.js"></script>
+<script src="__JS__/common.js"></script>
+<script>
+        /** 拖拽模态框*/ 
+        var dragModal={
+            mouseStartPoint:{"left":0,"top":  0},
+            mouseEndPoint : {"left":0,"top":  0},
+            mouseDragDown : false,
+            basePoint : {"left":0,"top":  0},
+            moveTarget:null,
+            topleng:0
+        }
+        $(document).on("mousedown",".modal-header",function(e){
+            //webkit内核和火狐禁止文字被选中
+            $('body').addClass('select')
+            //ie浏览器禁止文字选中
+            document.body.onselectstart=document.body.ondrag=function(){
+                return false;
+                }
+            if($(e.target).hasClass("close"))//点关闭按钮不能移动对话框  
+                return;  
+            dragModal.mouseDragDown = true;  
+            dragModal.moveTarget = $(this).parent().parent();         
+            dragModal.mouseStartPoint = {"left":e.clientX,"top":  e.pageY};  
+            dragModal.basePoint = dragModal.moveTarget.offset();  
+            dragModal.topLeng=e.pageY-e.clientY;
+        });  
+        $(document).on("mouseup",function(e){       
+            dragModal.mouseDragDown = false;  
+            dragModal.moveTarget = undefined;  
+            dragModal.mouseStartPoint = {"left":0,"top":  0};  
+            dragModal.basePoint = {"left":0,"top":  0};  
+        });  
+        $(document).on("mousemove",function(e){  
+            if(!dragModal.mouseDragDown || dragModal.moveTarget == undefined)return;          
+            var mousX = e.clientX;  
+            var mousY = e.pageY;  
+            if(mousX < 0)mousX = 0;  
+            if(mousY < 0)mousY = 25;  
+            dragModal.mouseEndPoint = {"left":mousX,"top": mousY};  
+            var width = dragModal.moveTarget.width();  
+            var height = dragModal.moveTarget.height();
+            var clientWidth=document.body.clientWidth
+            var clientHeight=document.body.clientHeight;
+            if(dragModal.mouseEndPoint.left<dragModal.mouseStartPoint.left - dragModal.basePoint.left){
+                dragModal.mouseEndPoint.left=0;
+            }
+            else if(dragModal.mouseEndPoint.left>=clientWidth-width+dragModal.mouseStartPoint.left - dragModal.basePoint.left){
+                dragModal.mouseEndPoint.left=clientWidth-width-38;
+            }else{
+                dragModal.mouseEndPoint.left =dragModal.mouseEndPoint.left-(dragModal.mouseStartPoint.left - dragModal.basePoint.left);//移动修正，更平滑  
+                
+            }
+            if(dragModal.mouseEndPoint.top-(dragModal.mouseStartPoint.top - dragModal.basePoint.top)<dragModal.topLeng){
+                dragModal.mouseEndPoint.top=dragModal.topLeng;
+            }else if(dragModal.mouseEndPoint.top-dragModal.topLeng>clientHeight-height+dragModal.mouseStartPoint.top - dragModal.basePoint.top){
+                dragModal.mouseEndPoint.top=clientHeight-height-38+dragModal.topLeng;
+            }
+            else{
+                dragModal.mouseEndPoint.top = dragModal.mouseEndPoint.top - (dragModal.mouseStartPoint.top - dragModal.basePoint.top);           
+            }
+            dragModal.moveTarget.offset(dragModal.mouseEndPoint);  
+        });   
+        $(document).on('hidden.bs.modal','.modal',function(e){
+            $('.modal-dialog').css({'top': '0px','left': '0px'})
+            $('body').removeClass('select')
+            document.body.onselectstart=document.body.ondrag=null;
+        })
+  </script>
+</body>
+</html>

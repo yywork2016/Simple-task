@@ -1,0 +1,55 @@
+<div class="button_list_div" style="margin-bottom: 15px;">
+<a class="btn btn-default" href="javascript:getNextMainContent('{:U('AuthGroup/index')}');"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> 返 回 </a>
+<button type="button" onclick="RefreshHtml(this);" class="btn btn-default right Refresh" url="{:U('',array('id'=>$this_group))}"><i class="iconfont">&#xe61a;</i> 刷新</button>
+<div class="clearfix"></div>
+</div>
+<form role="form" id="auth_rules_content" action="{:U('writeGroup')}" method="post" class="form-rule-sub">
+<input type="hidden" name="id" value="{$this_group}">
+<volist name="main_rules" id="vals">
+<div class="panel panel-default">
+  <div class="panel-heading" style="padding: 8px 20px;font-weight: bold;"><input class="auth_rules rules_all" name="rules_change[]" value="{$vals.id}" type="checkbox">  {$vals.title}</div>
+  <div class="panel-body">
+  <notempty name="vals['child_one']">  	
+		<dl class="checkmod">
+		<volist name="vals['child_one']" id="val">
+			<dd class="bd">
+				<div class="rule_check">
+                    <div>
+                    <label class="checkbox" data-hasqtip="50" oldtitle="网站属性配置。" title="" aria-describedby="qtip-50">
+                   <input class="auth_rules rules_row" name="rules[]" value="{$val.id}" type="checkbox" <if condition="$val['istrue'] EQ 1"> checked="checked"</if>>{$val.title}</label>
+                    </div>
+	                <notempty name="val['child_two']">
+	                       <span class="divsion">&nbsp;</span>
+                           <span class="child_row">
+                           <volist name="val['child_two']" id="vv">
+                           <label class="checkbox"><input class="auth_rules" <if condition="$vv['istrue'] EQ 1"> checked="checked"</if> name="rules[]" value="{$vv.id}" type="checkbox">{$vv.title}</label>
+                        	</volist>
+	               </span>
+	               </notempty>
+               </div>
+            </dd>
+        </volist>
+		</dl>
+	
+</notempty>			                   
+  </div>
+</div>
+</volist>
+</form>
+      <div class="modal-footer">        
+        <button type="submit" class="btn btn-danger ajax-post" id="submit" target-form="form-rule-sub"><i class="iconfont">&#xe60a;</i> 保 存 </button>        
+      </div>
+<script type="text/javascript" charset="utf-8">
+    +function($){
+
+        //全选节点
+        $('.rules_all').on('change',function(){
+            $(this).closest('.panel').find('dd').find('input').prop('checked',this.checked);
+        });
+        $('.rules_row').on('change',function(){
+            $(this).closest('.rule_check').find('.child_row').find('input').prop('checked',this.checked);
+        });
+
+
+    }(jQuery);
+</script>

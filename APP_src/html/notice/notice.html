@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>CHS</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style type="text/css">
+        .aui-content .aui-list-item-inner .aui-list-item-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width: 100%;}
+    </style>
+</head>
+<body>
+<div class="aui-content aui-margin-t-15">
+        <ul class="aui-list aui-list-in" id="noticelist">
+        </ul>
+    </div>
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+	apiready = function () {
+        
+	    //监听向右滑动关闭当前页
+	    api.addEventListener({
+	        name:'swiperight'
+	    }, function(ret, err){        
+	        api.closeWin();
+	    });
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: '#5f6d93',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            getNoticeList();
+            api.refreshHeaderLoadDone();
+        });
+      
+        getNoticeList();
+
+    }
+
+    function getNoticeList(){
+            // 开始加载
+    api.showProgress();
+    api.ajax({
+        url: OpenAPI.noticelist,
+        method: 'post',
+        dataType: 'JSON',
+        data: {
+            }
+        }, function(ret, err) {
+        if (ret) {
+
+            if(ret.status==1){
+                var info=ret.info;
+                var icontent='';
+                for(var i=0; info.length>i; i++){
+                    icontent +='<li class="aui-list-item aui-list-item-middle" onclick="shownotice('+info[i].id+',\''+info[i].ctime+'\',\''+info[i].title+'\')">';
+                    icontent +='<div class="aui-list-item-inner aui-list-item-arrow">';
+                        icontent +='<div class="aui-list-item-title">'+info[i].title+'</div>';
+                    if(info[i].status==0){
+                        icontent +='<div class="aui-list-item-right" id="ts'+info[i].id+'"><div class="aui-dot" style="position:relative;top:0; right:0"></div></div>';
+                    }
+                    icontent +='</div></li>';
+                }
+
+                $api.html($api.byId("noticelist"),icontent);
+            }else{
+               api.alert({msg:ret.info}); 
+            }
+            // 加载结束
+            api.hideProgress();
+        } else {
+            api.alert({ msg: JSON.stringify(err) });
+        }
+    });
+    }
+
+
+    function shownotice(nid,ctime,title){
+        api.alert({
+            title: ctime,
+            msg: title
+        });
+                    
+        api.ajax({
+        url: OpenAPI.setStatus,
+        method: 'post',
+        dataType: 'JSON',
+        data: {
+            values:{
+                id: nid
+            }
+            }
+        }, function(ret, err) {
+        if (ret) {
+            if(ret.status==1){
+                $api.remove($api.byId("ts"+nid));
+            }
+        } else {
+            api.alert({ msg: JSON.stringify(err) });
+        }
+    });
+
+        
+    }
+
+
+</script>

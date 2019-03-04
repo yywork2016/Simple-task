@@ -1,0 +1,149 @@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" onclick="CloseModal(this)"><span aria-hidden="false">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">{:isset($info['id'])?'编辑':'新增'}用户</h4>
+      </div>
+      <div class="modal-body">
+  <form role="form" id="add_auth_menu" action="{:U('')}" method="post" class="form-authrule">
+  <input type="hidden" name="id" id="menuid" value="{$info.id}">
+  <div class="row">
+  <div class="col-md-6">
+  <div class="form-group">
+    <label for="nickname"><span class="mustinput">*</span>姓名</label>
+    <input type="text" name="nickname" id="nickname" class="form-control" value="{$info.nickname}">
+  </div>
+  <div class="form-group">
+    <label for="yonghuming_"><span class="mustinput">*</span>用户名<em>（字母+数字）</em></label>
+    <input type="text" name="username" id="username" class="form-control" value="{$info.username}" placeholder="字母+数字">
+  </div>
+  <if condition="$typeid NEQ 1">
+<div class="form-group">
+    <label for="mima_"><span class="mustinput">*</span>密码{:isset($info['password'])?'<em>（密码留空则不变！）</em>':''}</label>
+    <input type="password" name="password" id="password" class="form-control" value="">
+  </div>
+</if>
+    <div class="form-group">
+    <label for="fenzu"><span class="mustinput">*</span>上级主管</label>
+    <if condition="$typeid NEQ 1">
+    <div class="input-group">
+      <input type="text" class="form-control" name="leadername" id="leadername" value="{$info.leadername}" readonly>
+      <input type="hidden" name="leader_id" id="leader_id" value="{$info.leader_id}">
+        <span class="input-group-btn">
+        <button class="btn btn-default delinput" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-default getuser" type-id="checkbox" data-value="leader_id" data-backname="leadername" url="{:U('Users/getUser_dept')}" data-name="上级主管" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon glyphicon-search"></span></button>
+      </span>
+    </div>
+    <else/>
+        <input type="text" class="form-control" name="leadername" id="leadername" value="{$info.leadername}" readonly>
+        <input type="hidden" name="leader_id" id="leader_id" value="{$info.leader_id}">
+    </if>
+  </div>
+  <div class="divider"></div>
+  <div class="form-group">
+    <label for="email">邮箱</label>
+    <input type="text" name="email" class="form-control" id="email" value="{$info.email}">
+  </div>
+  <div class="form-group">
+    <label for="email">QQ</label>
+    <input type="text" name="qq" class="form-control" id="qq" value="{$info.qq}">
+  </div>
+
+  </div>
+  <div class="col-md-6">
+  <div class="form-group">
+    <label for="sex"><span class="mustinput">*</span>性别</label>
+    <select name="sex" id="sex" class="form-control">
+        <option value="1" <if condition="$info['sex'] EQ 1">selected</if>>男性</option>
+        <option value="2" <if condition="$info['sex'] EQ 2">selected</if>>女性</option>
+    </select>
+  </div>
+<div class="form-group">
+    <label for="jobs"><span class="mustinput">*</span>职位</label>
+    <input type="text" name="jobs" id="jobs" class="form-control" value="{$info.jobs}">
+  </div>
+    <div class="form-group">
+    <label for="caidan"><span class="mustinput">*</span>所属部门</label>
+    <if condition="$typeid NEQ 1">
+    <div class="input-group">
+          <input type="text" class="form-control" name="groupname" id="groupname" value="{$info.groupname}" readonly>
+      <input type="hidden" name="group_id" id="group_id" value="{$info.group_id}">
+      <span class="input-group-btn">
+        <button class="btn btn-default getuser" type-id="radio" data-value="group_id" data-backname="groupname" url="{:U('Users/getUser_dept?typeid=1')}" data-name="所属部门" type="button" data-tid="1" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon glyphicon-search"></span></button>
+      </span>
+      </div>
+      <else/>
+      <input type="text" class="form-control" name="groupname" id="groupname" value="{$info.groupname}" readonly>
+      <input type="hidden" name="group_id" id="group_id" value="{$info.group_id}">
+      </if>
+  </div>
+  <div class="form-group">
+    <label for="jobs"><span class="mustinput">*</span>入职时间</label>
+    <if condition="$typeid NEQ 1">
+    <div class="input-group">
+    <input type="text" value="{$info.reg_time|time_format='Y-m-d'}" name="reg_time" id="reg_time" class="date form-control" readonly>
+    <span class="input-group-btn">
+        <button class="btn btn-default delinput" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-default getdate" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+      </span>
+    </div>
+    <else/>
+    <input type="text" value="{$info.reg_time|time_format='Y-m-d'}" name="reg_time" id="reg_time" class="date form-control" readonly>
+    </if>
+  </div>
+  <div class="form-group">
+    <label for="phone"><span class="mustinput">*</span>手机号</label>
+    <input type="text" name="phone" class="form-control" id="phone" value="{$info.phone}">
+  </div>
+
+
+  </div>
+</div>
+
+    
+    
+</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick="CloseModal(this)"><i class="iconfont">&#xe619;</i> 关 闭 </button>
+        <button type="submit" class="btn btn-danger ajax-post" id="submit" target-form="form-authrule"><i class="iconfont">&#xe60a;</i> 保 存 </button>
+      </div>
+    </div>
+  </div>
+ <if condition="$typeid NEQ 1"> 
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script src="__JS__/md5.js"></script>
+</if>
+</div>
+<script type="text/javascript">
+  $(function(){
+    $('#myModal').modal('toggle');
+     <if condition="$typeid NEQ 1">
+    $('.date').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true
+    });
+    </if>
+
+
+  });
+  $(".getdate").click(function(){
+      $("#reg_time").focus();
+  });
+  $(".delinput").click(function(){
+     $(this).parent().parent().find('input').val('');
+  });
+
+  $("#submit").click(function(){
+      var pwd=$("#password").val();
+      if(pwd != ''){
+        $("#password").val(hex_md5(pwd));
+      }
+  });
+</script>

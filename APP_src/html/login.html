@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>登陆</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+    #loginbg{background:url(../image/login_bg.png) no-repeat;width:100%;height:100%;color:#fff;background-size:100% 100%;position: absolute;min-height: 650px;}
+    
+    .aui-bar-primary{background:none;}
+         .form{ width:280px; margin:auto; margin-top:60px;}
+        .aui-btn-rows {
+    position:0;
+    text-align: center;
+    padding:0px;
+}
+.aui-btn-success{ width:280px;font-size:20px; height:45px; line-height:45px; border-radius: 25px; margin-top:40px;background: #2aac62;}
+.aui-input-addons{ float:right; font-size: 14px; margin-top:20px; color: #999999;}
+.aui-btn-rowss{ width:100%;}
+
+    </style>
+</head>
+<body>
+<div id="loginbg">
+<section class="aui-content-padded">
+<h1 style="text-align: center;margin-top: 100px;">任务系统</h1>
+</section>
+<div class="form">
+    <div class="aui-input-row">
+        <input name="text" type="text" style="border: 1px solid #b7b4b7;border-radius: 25px;padding: 0 15px;color: #fff;" id="username" placeholder="账号"/>
+    </div>
+    <div class="aui-input-row" style="margin-top: 15px;">
+        <input name="password" type="password" style="border: 1px solid #b7b4b7;border-radius: 25px;padding: 0 15px;color: #fff;" id="password" placeholder="密码"/>
+    </div>
+
+    <div class="aui-btn-rows">
+        <div class="aui-btn aui-btn-success chsuserlogin">登 陆</div>
+    </div>
+    
+</div>
+<div style="font-size: 12px;position: absolute;bottom: 30px;width: 100%;text-align: center;">www.chschs.com</div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/md5.js"></script>
+<script type="text/javascript">
+apiready = function(){
+    api.addEventListener({
+    name: 'keyback'
+    }, function(ret, err) {
+        // alert('按了返回键');
+    });
+}
+    
+$('.chsuserlogin').on('click',function(e){
+    var username=$api.val($api.byId("username"));
+    var getpwd=$api.val($api.byId("password"));
+    var newpwd=hex_md5(getpwd);
+
+    api.ajax({
+          url: OpenAPI.login,
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          returnAll:false,
+          data:{
+               values: {username: username, password: newpwd, remember: "remember-me", app: "1"}
+             }
+           },function(ret,err){
+                var info=ret.info;
+                if(ret.status==1){
+                    $api.setStorage('token', ret.token);
+                    $api.setStorage('uid', ret.uid);
+                    $api.setStorage('nickname', ret.nickname);
+                    $api.toast(ret.info);
+                    // 绑定推送用户
+                        var push = api.require('push');
+                        push.bind({
+                            userName: ret.nickname,
+                            userId: ret.uid
+                        }, function(retb, errb){
+                             // 啥都不做
+                        });
+                        // 加入群组
+                        push.joinGroup({
+                            groupName:'chs-task'
+                        },function(ret,err){
+                             // 啥都不做
+                        });
+
+                        api.openSlidLayout({
+                            type:'left',
+                            leftEdge: 200,
+                            fixedPane:{
+                                name: 'homeMenu',
+                                url: 'homeMenu.html'
+                            },
+                            slidPane:{
+                                name: 'homeSlide',
+                                url: 'homeSlide.html'
+                            }
+                        }, function(ret) {
+                            /* 暂时不需要做任何事. */
+                        });
+                        
+                        // api.closeWin();
+                        // api.closeToWin({
+                        //     name: 'root'
+                        // });
+
+                }else if(ret.status==0){
+                    {api.toast({msg : info});}
+                }else if(err){
+                    {api.toast({msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)});}
+                } 
+           });
+ 
+
+});
+
+
+</script>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我创建的任务</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+</head>
+<body>
+<div id="warper">
+</div>
+
+<div id="selecttype" style="display: none;">
+    <input type="hidden" name="taskid">
+    <div class="mark"  onclick="canceltask()"></div>
+    <ul class="selectlist">
+        <li onclick="edittask()">编辑</li>
+        <li onclick="deltask()">删除</li>
+        <li onclick="canceltask()">取消</li>
+    </ul>
+</div>   
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script language="JavaScript">
+apiready = function(){
+
+    //监听向右滑动关闭当前页
+        api.addEventListener({
+            name:'swiperight'
+        }, function(ret, err){        
+            api.closeWin();
+        });
+
+    api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: '#5f6d93',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            showtasklist();
+            api.refreshHeaderLoadDone();
+        });
+
+    showtasklist();
+}
+
+function edittask(){
+    var param=$api.val($api.dom("input[name=taskid]"));
+    api.openWin({
+            name: 'edittask',
+            url: 'createtask.html',
+            pageParam: {
+                id: param
+            }
+    })
+    canceltask();
+}
+
+function deltask(){
+    var taskid=$api.val($api.dom("input[name=taskid]"));
+    api.ajax({
+    url: OpenAPI.deltaskapi,
+    method: 'post',
+    dataType: 'json',
+    data:{
+        values: {
+            taskid: taskid
+        }
+    }
+     },function(ret,err){
+        CheckLogin(ret.loginout);
+          var info=ret.info;
+          if(ret.status==1){
+                canceltask();
+                api.toast({msg:info});
+                setTimeout(function(){
+                    window.location.reload();
+                },2000);
+          }else if(err){
+              api.toast({msg : ('错误码：' + err.code + '；错误信息：' + err.msg + '；网络状态码：' + err.statusCode)});
+          }else{
+            api.alert({msg : info});
+          }
+     });
+    
+}
+
+function showselecttype(id){
+    $api.css($api.dom("#selecttype"),'display:block');
+    $api.val($api.dom('input[name=taskid]'),id);
+}
+
+
+function canceltask(){
+    $api.css($api.dom("#selecttype"),'display:none');
+}
+
+
+function detail(param){
+    api.openWin({
+            name: 'task_detail',
+            url: 'task_detail.html',
+            pageParam: {
+                id: param
+            }
+    })
+}
+
+function showtasklist(){
+    // 开始加载
+    api.showProgress();
+    api.ajax({
+        url: OpenAPI.mytasklist,
+        method: 'post',
+        dataType: 'JSON',
+        data: {}
+        }, function(ret, err) {
+        if (ret) {
+
+            CheckLogin(ret.loginout);
+
+            if(ret.status==1){
+                var tinfo=ret.info;
+                var htmls='';
+                var tinfoLen='';
+                if(tinfo != null){
+                for(var j=0;j<tinfo.length;j++){
+
+                    tinfoLen=tinfo.length;
+                    htmls +='<div class="task-list-content">'; 
+                    htmls +='<div class="task-cover"><img src="'+tinfo[j].cover+'" class="user-cover"></div>'; 
+                    htmls +='<div class="task-title-rand" onclick="detail('+tinfo[j].id+');">'; 
+                    htmls +=tinfo[j].title;
+                    htmls +='<br/>';
+                    htmls +=tinfo[j].levelname;
+                    htmls +='<span class="task-request-done">要求完成日期：'+tinfo[j].enddt+'</span>'; 
+                    htmls +='</div>'; 
+                    htmls +='<div class="task-quick">'; 
+                    if(tinfo[j].showquick==1){
+                        htmls +='<div class="quickbutton" onclick="showselecttype('+tinfo[j].id+')">编辑</div>'; 
+                    }
+                    htmls +='</div>'; 
+                    htmls +='</div>';
+                    if(j!=(tinfoLen-1)){
+                        htmls +='<div class="onepxline"></div>'; 
+                    }
+                }
+            }else{
+                htmls +="<div style='text-align: center;'>暂无任务</div>";
+            }
+
+            $api.html($api.byId("warper"),htmls);
+
+            }else{
+                api.alert({msg:ret.info});
+            }
+
+            // 加载结束
+            api.hideProgress();
+        } else {
+            api.alert({ msg: JSON.stringify(err) });
+        }
+    });
+}
+</script>

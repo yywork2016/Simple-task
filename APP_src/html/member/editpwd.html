@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>修改密码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+</head>
+<body style="background:#eaebec;height: 100%;position:relative;">
+<header class="aui-bar aui-bar-nav aui-margin-b-15 header" style="background:#5f6d93;margin-top: 0;">
+    <a class="aui-pull-left aui-btn" onclick="closewin()">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </a>
+    <div class="aui-title">修改密码</div>
+    <a class="aui-pull-right aui-btn" onclick="editpwd()">
+        提交
+    </a>
+</header>
+<form name="pwd">
+<div class="aui-content task-member-list">
+    <ul class="aui-list aui-list-in">
+    <!-- <li class="aui-list-header" style="height: 15px;"></li> -->
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    原密码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="password" name="oldpwd" placeholder="原密码">
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header" style="height: 15px;"></li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    新密码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="password" name="newpwd" placeholder="新密码">
+                </div>
+            </div>
+        </li>
+
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    确认密码
+                </div>
+                <div class="aui-list-item-input">
+                    <input type="password" name="repwd" placeholder="确认密码">
+                </div>
+            </div>
+        </li>
+       
+    </ul>
+</div>
+</form>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/md5.js"></script>
+<script type="text/javascript">
+apiready = function () {
+
+        //监听向右滑动关闭当前页
+        api.addEventListener({
+            name:'swiperight'
+        }, function(ret, err){        
+            api.closeWin();
+        });
+
+}
+function editpwd(){
+    var oldpwd=$api.val($api.dom("input[name=oldpwd]"));
+    var newpwd=$api.val($api.dom("input[name=newpwd]"));
+    var repwd=$api.val($api.dom("input[name=repwd]"));    
+    if(oldpwd==''){
+        api.toast({msg:"原密码不能为空！"});
+        return false;
+    }
+    if(newpwd==''){
+        api.toast({msg:"新密码不能为空！"});
+        return false;
+    }
+    if(repwd==''){
+        api.toast({msg:"确认密码不能为空！"});
+        return false;
+    }
+     api.ajax({
+        url: OpenAPI.editpwd,
+        dataType:'json',
+        method: 'post',
+        data: {
+            values: {
+                old: hex_md5(oldpwd),                
+                password: hex_md5(newpwd),
+                repassword: hex_md5(repwd)
+            }
+        }
+    }, function(ret, err) {
+        if (ret) {
+            CheckLogin(ret.loginout);
+            api.toast({
+                msg: ret.info,
+                duration: 2000,
+                location: 'middle'
+            });
+
+            if(ret.status==1){
+                $api.rmStorage('token');
+                setTimeout("api.openWin({name:\"login\",url:api.wgtRootDir+\"/html/login.html\"})",1000);
+            }       
+        } else {
+            api.alert({ msg: JSON.stringify(err) });
+        }
+    });
+ }
+
+ function closewin(){
+    api.closeWin();
+ }
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget id="A6934025903131" version="0.0.1"> 
+  <name>CHS任务系统</name>  
+  <description>CHS公司内部任务管理系统</description>  
+  <author email="446540553@qq.com" href="http://www.chschs.com">yywork</author>  
+  <content src="index.html"/>  
+  <preference name="appBackground" value="rgba(0,0,0,0)"/>  
+  <preference name="windowBackground" value="rgba(0,0,0,0)"/>  
+  <preference name="frameBackgroundColor" value="rgba(0,0,0,0)"/>  
+  <preference name="autoLaunch" value="true"/>  
+  <preference name="autoUpdate" value="true"/>  
+  <preference name="smartUpdate" value="false"/>  
+  <preference name="debug" value="true"/>  
+  <preference name="statusBarAppearance" value="false"/>  
+  <permission name="location"/>  
+  <permission name="internet"/>  
+  <permission name="fileSystem" />
+  <access origin="*"/> 
+</widget>
+

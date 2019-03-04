@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>TASK</title>
+    <script type="text/javascript" src="script/api.js"></script>
+    <script type="text/javascript" src="script/common.js"></script>
+</head>
+<body style="background-color: #fff;position: fixed;height: 100%;width: 100%;">
+<script type="text/javascript">
+    apiready = function () {
+     api.setStatusBarStyle({
+         style: 'green',
+         color: '#5f6d93'
+     });
+
+        if(token == null || token=='undefined' || token==''){
+
+            api.openWin({
+            name: "login",
+            url: 'html/login.html'
+            });
+
+        }else{
+            Getindex(0);
+        }
+
+        //安卓应用
+    var isAndroid = (/android/gi).test(navigator.appVersion);
+    if (isAndroid) {
+        //绑定安卓的后退按钮事件 两秒内后退按钮点击两次 关闭应用
+        var backSecond = 0;
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            var curSecond = new Date().getSeconds();
+            if (Math.abs(curSecond - backSecond) > 2) {
+                backSecond = curSecond;
+                api.toast({
+                    msg: '连续按两次关闭系统',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            } else {
+                api.closeWidget({
+                    id: api.appId, //这里改成自己的应用ID
+                    retData: {name:'closeWidget'},
+                    silent:true
+                    });
+            }
+        });
+    }
+
+
+    }
+
+    function Getindex(page){
+    try {
+        api.openSlidLayout({
+                type:'left',
+                leftEdge: 200,
+                fixedPane:{
+                    name: 'homeMenu',
+                    url: 'html/homeMenu.html'
+                },
+                slidPane:{
+                    name: 'homeSlide',
+                    url: 'html/homeSlide.html'
+                }
+            }, function(ret) {
+                /* 暂时不需要做任何事. */
+
+            });
+        } catch (e) {
+            toast(e)
+        }
+    }
+
+
+    function reloadindex(){
+        // api.toast({msg:'1212'});
+        Getindex(0);
+        window.location.reload();
+    }
+
+</script>
+</body>
+</html>
+

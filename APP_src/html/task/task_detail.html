@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+    <style type="text/css">
+        
+    </style>
+</head>
+<body style="background:#eaebec;height: 100%;position:relative;">
+    <header class="aui-bar aui-bar-nav" id="topbar" style="background:#5f6d93;">
+    <div class="aui-pull-left aui-btn" onclick="goback()">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </div>
+    <div class="aui-title">任务详情</div>
+    </header>
+
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+    api.setStatusBarStyle({
+         style: 'white',
+         color: '#5f6d93'
+     });
+     var header = $api.byId('topbar');
+     // $api.fixStatusBar(header);
+     // $api.fixIos7Bar(header);
+    var headerPos = $api.offset(header);
+    var id=api.pageParam.id;
+    api.openFrame({
+        name: 'detail',
+        url: 'detail.html',
+        rect: {
+            x: 0,
+            y: headerPos.h,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam : {
+                    id: id
+                },
+        bounces: false,
+        delay: 200
+    });
+
+    }
+
+    function goback()
+    {
+        api.closeWin();
+    }
+</script>

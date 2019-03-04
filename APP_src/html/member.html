@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>会员中心</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <style type="text/css">
+        #topbar::after{
+            border-bottom: 1px solid #a6b1cf;
+            bottom: 0;
+            color: #a6b1cf;
+            content: " ";
+            height: 1px;
+            left: 0;
+            position: absolute;
+            right: 0;
+            transform: scaleY(0.5);
+            transform-origin: 0 100% 0;
+        }
+    </style>
+</head>
+<body style="background:#eaebec;height: 100%;position:relative;">
+<header class="aui-bar aui-bar-nav aui-margin-b-15" id="topbar" style="background:#5f6d93;margin-top: 0;">
+    <a class="aui-pull-left aui-btn" onclick="goback()">
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </a>
+    <div class="aui-title">个人中心</div>
+</header>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+    api.setStatusBarStyle({
+         style: 'white',
+         color: '#5f6d93'
+     });
+     var header = $api.byId('topbar');
+     // $api.fixStatusBar(header);
+     // $api.fixIos7Bar(header);
+    var headerPos = $api.offset(header);
+
+    api.openFrame({
+        name: 'mcenter',
+        url: 'member/mcenter.html',
+        rect: {
+            x: 0,
+            y: headerPos.h,
+            w: 'auto',
+            h: 'auto'
+        }
+    });
+
+
+    }
+
+
+
+    function goback()
+    {
+        api.closeWin();
+    }
+
+</script>

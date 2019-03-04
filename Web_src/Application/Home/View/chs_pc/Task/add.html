@@ -1,0 +1,213 @@
+<div class="modal fade bs-example-modal-lg need_dropdown" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" onclick="CloseModal(this)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">{:isset($info['id'])?'编辑':'创建'}任务</h4>
+      </div>
+      <div class="modal-body">
+  <form role="form" id="add_auth_menu" action="{:U('')}" method="post" class="form-authrule">
+  <input type="hidden" name="id" id="menuid" value="{$info.id}">
+  <table class="table table-bordered addtask_table">
+  <tr>
+    <th width="150">任务名称</th>
+    <td><input type="text" name="title" id="title" class="form-control" value="{$info.title}"></td>
+    <th width="150">反馈类型</th>
+    <td>
+      <label><input type="checkbox" name="type[]" value="生产" {:Get_checkbox('生产',$info['type'])}> 生产</label>
+      <label><input type="checkbox" name="type[]" value="客户" {:Get_checkbox('客户',$info['type'])}> 客户</label>
+      <label><input type="checkbox" name="type[]" value="开发" {:Get_checkbox('开发',$info['type'])}> 开发</label>
+      <label><input type="checkbox" name="type[]" value="自主" {:Get_checkbox('自主',$info['type'])}> 自主</label>
+    </td>
+  </tr>
+  <tr>
+    <th>反馈时间</th>
+    <td>    
+    <div class="input-group">
+    <input type="text" value="{$info.startdt|time_format='Y-m-d'}" name="startdt" id="startdt" class="date form-control" readonly>
+    <span class="input-group-btn">
+        <button class="btn btn-default deltime" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-default getdate" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+      </span>
+    </div>
+    </td>
+    <th>申请人</th>
+    <td><div class="input-group">
+    <input type="text" value="{:isset($info['applyname'])?$info['applyname']:get_nickname(UID)}" name="applyname" id="applyname" class="form-control" readonly>
+    <input type="hidden" name="applyid" id="applyid" value="{:isset($info['applyid'])?$info['applyid']:UID}">
+    <span class="input-group-btn">
+        <button class="btn btn-default getuser" type="button" type-id="radio" data-value="applyid" data-backname="applyname" url="{:U('Users/getUser_dept')}" data-name="申请人" data-tid="2" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon-user"></span></button>
+      </span>
+    </div></td>
+  </tr>
+    <tr>
+    <th>要求完成时间</th>
+    <td>    
+    <div class="input-group">
+    <input type="text" value="{$info.enddt|time_format='Y-m-d'}" name="enddt" id="enddt" class="date form-control" readonly>
+    <span class="input-group-btn">
+        <button class="btn btn-default deltime" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-default getdate" type="button"><span class="glyphicon glyphicon-calendar"></span></button>
+      </span>
+    </div>
+    </td>
+    <th>任务审核（领导）</th>
+    <td>    <div class="input-group">
+    <input type="text" value="{:isset($info['leaderid'])?Get_leader_names($info['leaderid']):Get_leader_names(C('TASK_EXAMINE'))}" name="leadername" id="leadername" class="form-control" readonly>
+    <input type="hidden" name="leaderid" id="leaderid" value="{:isset($info['leaderid'])?$info['leaderid']:C('TASK_EXAMINE')}">
+    <span class="input-group-btn">
+        <button class="btn btn-default deltime" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-default getuser" type="button" type-id="checkbox" data-value="leaderid" data-backname="leadername" url="{:U('Users/getUser_dept')}" data-name="任务审核（领导）" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon-user"></span></button>
+      </span>
+    </div></td>
+  </tr>
+  <tr>
+    <td colspan="4">
+        <div class="form-group">
+        <label for="title" style="font-weight: bold;">任务说明</label>
+        <textarea name="content" class="form-control" rows="5">{$info.content}</textarea>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <th>任务接收人</th>
+    <td>
+      <div class="input-group">
+    <input type="text" value="{:isset($info['dist'])?Get_leader_names($info['dist']):''}" name="distname" id="distname" class="form-control" readonly>
+    <input type="hidden" name="dist" id="dist" value="{$info.dist}">
+    <span class="input-group-btn">
+        <button class="btn btn-default deltime" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-default getuser" type="button" type-id="checkbox" data-value="dist" data-backname="distname" url="{:U('Users/getUser_dept')}" data-name="任务接收人" data-tid="2" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon-user"></span></button>
+      </span>
+    </div>
+    </td>
+    <th>等级</th>
+    <td>    
+          <select name="level" id="level" class="form-control">
+              <option value="">-请选择-</option>
+              <volist name="arr_level" id='sl'>
+              <option value="{$key}" <if condition="$info['level'] EQ $key">selected="selected"</if>>{$sl}</option>
+              </volist>
+          </select>
+    </td>
+    
+  </tr>
+  <tr>
+    <th>结果确定(测试)人<br/><span style="font-size: 12px;font-weight: normal;color: #999;">(空默认为申请人)</span></th>
+    <td>
+      <div class="input-group">
+    <input type="text" value="{:isset($info['testman'])?Get_leader_names($info['testman']):''}" name="testname" id="testname" class="form-control" readonly>
+    <input type="hidden" name="testman" id="testman" value="{$info.testman}">
+    <span class="input-group-btn">
+        <button class="btn btn-default deltime" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+        <button class="btn btn-default getuser" type="button" type-id="checkbox" data-value="testman" data-backname="testname" url="{:U('Users/getUser_dept')}" data-name="任务结果确定人" data-tid="2" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon-user"></span></button>
+      </span>
+    </div>
+    </td>
+    <th>归档人</th>
+    <td>    
+      <div>
+    <input type="text" value="{:isset($info['fileman'])?Get_leader_names($info['fileman']):Get_leader_names(C('FILE_MANS'))}" name="filemanname" id="filemanname" class="form-control" readonly>
+    <input type="hidden" name="fileman" id="fileman" value="{:isset($info['fileman'])?$info['fileman']:C('FILE_MANS')}">
+    </div>
+    </td>
+    
+  </tr>
+    <tr>
+    <th>相关文件<br/><span style="font-size: 12px;font-weight: normal;color: #999;">(支持多文件上传)</span></th>
+    <td colspan="3">
+    <script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
+        <div class="controls">
+          <input type="file" id="upload_file_task">
+          <div id="uploadfile">
+          <if condition="$info['file_id'] NEQ null">
+          <volist name="file_arr" id="file">
+          <input type="hidden" name="file_id[]" value="{$file.shuju}"/>
+          </volist>
+          </if></div>          
+          <div class="upload-img-box">
+            <present name="info['file_id']">
+            <volist name="file_arr" id="file">
+              <div class="upload-pre-file"><span class="upload_icon_all"></span>{$file.name}<div class='closefile_id'></div></div>
+            </volist>
+            </present>
+          </div>
+        </div> 
+
+        <script type="text/javascript">
+                //上传图片
+                  /* 初始化上传插件 */
+                $("#upload_file_task").uploadify({
+                      "height"          : 30,
+                      "swf"             : "__STATIC__/uploadify/uploadify.swf",
+                      "fileObjName"     : "download",
+                      "buttonText"      : "上传附件",
+                      "uploader"        : "{:U('File/upload',array('session_id'=>session_id()))}",
+                      "width"           : 120,
+                      'removeTimeout'   : 1,
+                      "onUploadSuccess" : uploadFiletask,
+                      'onFallback' : function() {
+                          alert('未检测到兼容版本的Flash.');
+                      }
+                  });
+                $("#upload_file_task").click(function(){
+                  $(".upload-img-box").css({'min-height':'70px'});
+                });
+                function uploadFiletask(file, data){
+                  var data = $.parseJSON(data);
+                      if(data.status){
+                        var files='<input type="hidden" name="file_id[]" value="'+data.data+'"/>';
+                        $("#uploadfile").append(files);
+                        $("#uploadfile").parent().find('.upload-img-box').append(
+                          "<div class=\"upload-pre-file\"><span class=\"upload_icon_all\"></span>" + data.info + "<div class='closefile_id'></div></div>"
+                        );
+                      } else {
+                        updateAlert(data.info);
+                        setTimeout(function(){
+                              $('#top-alert').find('button').click();
+                              $(that).removeClass('disabled').prop('disabled',false);
+                          },1500);
+                      }
+                  }
+                
+                $(".upload-img-box").on('click','.closefile_id',function(){
+                  var nums=$(this).parent().index();
+                  $(".upload-pre-file:eq("+nums+")").remove();
+                  $("input[name^=file_id]:eq("+nums+")").remove();
+                });
+          </script>
+
+    </td>    
+  </tr>
+  </table>
+
+</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick="CloseModal(this)"><i class="iconfont">&#xe619;</i> 关 闭 </button>
+        <button type="submit" class="btn btn-danger ajax-post" id="submit" target-form="form-authrule"><i class="iconfont">&#xe60a;</i> 保 存 </button>
+      </div>
+    </div>
+  </div>
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript">
+  $(function(){
+    $('#myModal').modal('toggle');
+    $('.date').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true
+    });
+  });
+  $(".getdate").click(function(){
+      $(this).parent().parent().find('input').focus();
+  });
+  $(".deltime").click(function(){
+      $(this).parent().parent().find('input').val('');
+  });
+</script>
+</div>

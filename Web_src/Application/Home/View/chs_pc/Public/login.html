@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>用户登陆</title>
+    <!-- Bootstrap core CSS -->
+    <link href="__CSS__/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="__CSS__/public.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<style type="text/css">
+  .middle_content{position: absolute;top: 50%;margin-top: -160px;left:50%;margin-left:-200px;height: 320px; width: 400px;}
+</style>
+  </head>
+
+  <body>
+    <div id="top-alert" class="fixed alert alert-error" style="width: 400px;left:50%;top:40%;margin-top: -100px;margin-left: -200px;display: none;">
+      <button class="close" style="position: absolute;right: 10px;top: 13px;color: #fff;">&times;</button>
+      <div class="alert-content">这是内容</div>
+    </div>
+
+
+    <div class="container" style="position: absolute;width: 100%;height: 100%;background:#1389D3 url('__IMG__/loginbg.jpg') no-repeat;background-size: 100% 100%;">
+    <div class="middle_content" style="background-color: #fff;opacity:0.5;filter:Alpha(opacity=50);z-index: 1"></div>
+    <div class="middle_content" style="z-index: 2">
+      <form class="form-signin" role="form" action="{:U()}" method="post">
+        <h2 class="form-signin-heading">用户登陆</h2>
+        <input type="text" name="username" class="form-control" placeholder="Email / 手机号  / 用户名" required autofocus>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="remember" value="remember-me"> 本机保持登陆
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block ajax-post" url-type="1" type="submit" target-form="form-signin"> 登  入 </button>
+      </form>
+    </div>
+    </div> <!-- /container -->
+    <script src="__JS__/jquery.min.js"></script>
+  <script src="__JS__/md5.js"></script>
+  <script src="__JS__/common.js"></script>
+  <script type="text/javascript">
+    $(".btn-block").click(function(){
+      var pwd=$("#password").val();
+      if(pwd != ''){
+        $("#password").val(hex_md5(pwd));
+      }
+    });
+  </script>
+  </body>
+</html>

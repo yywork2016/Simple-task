@@ -1,0 +1,63 @@
+<div class="button_list_div" style="clear: both;">
+<if condition="$typeid NEQ 1">
+<button type="button" class="btn btn-success" onclick="addModal('{:U(\'add\')}');">
+<i class="iconfont">&#xe641;</i> 新增用户
+</button>
+<button class="btn ajax-post btn-primary" target-form="ids" url="{:U('setStatus',array('status'=>1))}">启 用</button>
+<button class="btn ajax-post btn-warning" target-form="ids" url="{:U('setStatus',array('status'=>0))}">禁 用</button>
+<button type="button" class="btn btn-default ajax-post confirm" url="{:U('setStatus',array('status'=>-1))}" target-form="ids"><i class="iconfont">&#xe600;</i> 删除</button>
+</if>
+<button type="button" onclick="RefreshHtml(this);" class="btn btn-default right Refresh" url="{:U('')}"><i class="iconfont">&#xe61a;</i> 刷新</button>
+</div>
+
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+  <th class="row-selected"><input class="checkbox check-all" type="checkbox"></th>
+  <th>ID</th>
+  <th>头像</th>
+  <th>用户名</th>
+  <th>姓名</th>
+  <th>部门</th>
+  <th>上级主管</th>
+  <th>职位</th>
+  <th>电话</th>
+  <th>E-mail</th>
+  <th>QQ</th>
+  <th>登陆次数</th>
+  <th>状态</th>
+  <th>操作</th>
+</tr>
+</thead>
+<tbody>
+<notempty name="list">
+<volist name="list" id="val">
+<tr>
+  <td><input class="ids row-selected" name="ids[]" value="{$val.id}" type="checkbox"></td>
+  <td>{$val.id}</td>
+  <td class="double_big_hover"><img src="{$val.cover}" height="23"></td>
+  <td>{$val.username}</td>
+  <td>{$val.nickname}</td>
+  <td>{$val.groupname}</td>
+  <td>{$val.leadername}</td>
+  <td>{$val.jobs}</td>
+  <td>{$val.phone}</td>
+  <td>{$val.email}</td>
+  <td>{$val.qq}</td>
+  <td>{$val.login}</td>
+  <td>{:status_Meaning($val['status'])}</td>
+  <td> 
+  <if condition="$typeid NEQ 1">
+    <a title="编辑" href="javascript:addModal('{:U('user_edit?id='.$val['id'])}');">编辑</a>
+    <a class="confirm ajax-get" title="删除" href="{:U('setStatus?status=-1&ids='.$val['id'])}">删除</a>
+  <else/>
+    <a title="编辑" href="javascript:addModal('{:U('user_edit',array('id'=>$val['id'],'typeid'=>1))}');">编辑</a>
+  </if>
+    </td>
+</tr>
+</volist>
+<else/>
+<tr><td colspan="11" class="text-center"> aOh! 暂时还没有内容! </td></tr>
+</notempty>
+</tbody>
+</table>

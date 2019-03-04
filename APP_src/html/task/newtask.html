@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>最新任务</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+</head>
+<body>
+<div id="warper">
+</div>   
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script language="JavaScript">
+apiready = function(){
+    api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: '#5f6d93',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            showtasklist();
+            api.refreshHeaderLoadDone();
+        });
+
+    showtasklist();
+
+            //安卓应用
+    var isAndroid = (/android/gi).test(navigator.appVersion);
+    if (isAndroid == true) {
+        //绑定安卓的后退按钮事件 两秒内后退按钮点击两次 关闭应用
+        var backSecond = 0;
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            var curSecond = new Date().getSeconds();
+            if (Math.abs(curSecond - backSecond) > 2) {
+                backSecond = curSecond;
+                api.toast({
+                    msg: '连续按两次关闭系统',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            } else {
+                api.closeWidget({
+                    id: api.appId, //这里改成自己的应用ID
+                    retData: {name:'closeWidget'},
+                    silent:true
+                    });
+            }
+        });
+    }
+}
+
+
+function detail(param){
+    api.openWin({
+            name: 'task_detail',
+            url: 'task_detail.html',
+            pageParam: {
+                id: param
+            }
+    })
+}
+
+function showtasklist(){    
+    // 开始加载
+    api.showProgress();
+    api.ajax({
+        url: OpenAPI.getTaskList,
+        method: 'post',
+        dataType: 'JSON',
+        data: {
+            values: {
+                typeid: '1'
+                }
+            }
+        }, function(ret, err) {
+        if (ret) {           
+            CheckLogin(ret.loginout);
+            if(ret.status==1){
+                var infolist=ret.info;
+                var htmls='';
+                var margin='';
+                var tinfo='';
+                var tinfoLen='';
+                if(infolist != null){
+                for(var i=0;i<infolist.length;i++){
+                    if(i==0){
+                        margin='style="margin-top: 0;"';
+                    }else{
+                        margin='';
+                    }
+                    tinfo=infolist[i]._;
+                    tinfoLen=tinfo.length;
+                    htmls +='<div class="Task-Nav" '+margin+'>';                    
+                    htmls +='<div class="Task-Nav-title">'+infolist[i].task_category+'</div>';
+                    htmls +='</div>';
+
+                    for (var j=0;j<tinfoLen;j++) {
+                        htmls +='<div class="task-list-content">'; 
+                        htmls +='<div class="task-cover"><img src="'+tinfo[j].cover+'" class="user-cover"></div>'; 
+                        htmls +='<div class="task-title-rand" onclick="detail('+tinfo[j].id+');">'; 
+                        htmls +=tinfo[j].title;
+                        htmls +='<br/>';
+                        htmls +=tinfo[j].levelname;
+                        htmls +='<span class="task-request-done">要求完成日期：'+tinfo[j].enddt+'</span>'; 
+                        htmls +='</div>';
+                        if(tinfo[j].showquick==1){
+                        htmls +='<div class="task-quick">'; 
+                        if(infolist[i].tasktypeid==1){                            
+                            htmls +='<div class="quickbutton" onclick="pop_common('+infolist[i].tasktypeid+','+tinfo[j].id+',\'examine(1)\',\'\');">审批</div>';
+                        }else if (infolist[i].tasktypeid==2) {
+                            htmls +='<div class="quickbutton" onclick="get_task('+tinfo[j].id+',1);">领取</div>'; 
+                        }else if (infolist[i].tasktypeid==4) {
+                            htmls +='<div class="quickbutton" onclick="fileman('+tinfo[j].id+',1);">归档</div>'; 
+                        }
+                        htmls +='</div>';
+                        }
+                        htmls +='</div>';
+                        if(j!=(tinfoLen-1)){
+                            htmls +='<div class="onepxline"></div>'; 
+                        }
+                    }
+
+                }
+            }else{
+                htmls +="<div style='text-align: center;'>暂无任务</div>";
+            }
+
+                // api.alert({msg:htmls});
+                $api.html($api.byId("warper"),htmls);
+
+            }else{
+                api.alert({msg:ret.info});
+            }            
+        } else {
+            api.alert({ msg: JSON.stringify(err) });
+        }
+        // 加载结束
+        api.hideProgress();
+    });
+}
+</script>

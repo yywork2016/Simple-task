@@ -1,0 +1,25 @@
+<div class="button_list_div">
+<button type="button" class="btn btn-success" onclick="addModal('{:U(\'Group/add\')}');">
+<i class="iconfont">&#xe641;</i> 添加部门
+</button>
+<button class="btn ajax-post btn-primary" target-form="ids" url="{:U('Group/setStatus',array('status'=>1))}">启 用</button>
+<button class="btn ajax-post btn-warning" target-form="ids" url="{:U('Group/setStatus',array('status'=>0))}">禁 用</button>
+<button type="button" class="btn btn-default ajax-post confirm" url="{:U('Group/setStatus',array('status'=>-1))}" target-form="ids"><i class="iconfont">&#xe600;</i> 删除</button>
+<button type="button" onclick="RefreshHtml(this);" class="btn btn-default right Refresh" url="{:U('')}"><i class="iconfont">&#xe61a;</i> 刷新</button>
+</div>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+  <th class="row-selected"><input class="checkbox check-all" type="checkbox"></th>
+  <th>ID</th>
+  <th>名称</th>
+  <th>上级部门</th>
+  <th>排序</th>
+  <th>状态</th>
+  <th>操作</th>
+</tr>
+</thead>
+<tbody>
+{:R('Group/tree', array($tree))}
+</tbody>
+</table>

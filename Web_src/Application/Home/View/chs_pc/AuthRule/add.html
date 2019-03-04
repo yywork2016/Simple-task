@@ -1,0 +1,68 @@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" onclick="CloseModal(this)"><span aria-hidden="false">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">{:isset($info['id'])?'编辑':'添加'}节点<em style="color: red;font-size: 12px;">（注：非开发人员请勿操作）</em></h4>
+      </div>
+      <div class="modal-body">
+  <form role="form" id="add_auth_menu" action="{:U('')}" method="post" class="form-authrule">
+  <input type="hidden" name="id" id="menuid" value="{$info.id}">
+  <div class="form-group">
+    <label for="title">标题<em>（用于后台显示的配置标题）</em></label>
+    <input type="text" name="title" id="title" class="form-control" value="{$info.title}">
+  </div>
+  <div class="form-group">
+    <label for="url">链接<em>（U函数解析的URL或者外链）</em></label>
+    <input type="text" name="url" id="url" class="form-control" value="{$info.url}">
+  </div>
+  <div class="form-group">
+    <label for="caidan">上级菜单<em>（所属的上级菜单）</em></label>
+        <select name="pid" id="pid" class="form-control">
+          <volist name="Menus" id="menu">
+              <option value="{$menu.id}" <if condition="$info['pid'] EQ $menu['id']">selected</if>>{$menu.title_show}</option>
+          </volist>
+        </select>
+  </div>
+  <div class="form-group">
+    <label for="fenzu">分组<em>（用于左侧分组二级菜单）</em></label>
+    <input type="text" name="group" id="group" class="form-control" value="{$info.group}">
+  </div>
+  <div class="form-group">
+    <label for="yinchang">是否隐藏</label>
+    <div class="checkbox">
+    <label class="radio-inline">
+  <input type="radio" name="status" value="0" <if condition="$info['status'] EQ 0">checked="checked"</if>> 是
+</label>
+<label class="radio-inline">
+  <input type="radio" name="status" value="1" <if condition="$info['status'] EQ 1">checked="checked"</if>> 否
+</label></div>
+  </div>
+  <div class="form-group">
+    <label for="icon">图标<em>（标题左侧图标）</em></label>
+    <div class="input-group">
+    <div class="input-group-addon"><a href="#">图标</a></div><input type="text" id="icon" name="icon" class="form-control" value="{$info.icon}">
+    </div>
+  </div>
+    <div class="form-group">
+    <label for="content">说明<em>（菜单详细说明）</em></label>
+    <input type="text" name="content" class="form-control" id="content" value="{$info.content}">
+  </div>
+    <div class="form-group">
+    <label for="sort">排序<em>（用于分组显示的顺序）</em></label>
+    <input type="text" name="sort" class="form-control" id="sort" value="{$info.sort}">
+  </div>
+</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick="CloseModal(this)"><i class="iconfont">&#xe619;</i> 关 闭 </button>
+        <button type="submit" class="btn btn-danger ajax-post" id="submit" target-form="form-authrule"><i class="iconfont">&#xe60a;</i> 保 存 </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(function(){
+    $('#myModal').modal('toggle');
+  });
+</script>

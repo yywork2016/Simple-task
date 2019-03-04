@@ -1,0 +1,115 @@
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" onclick="CloseModal(this)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">【任务】{$info.title}</h4>
+      </div>
+      <div class="modal-body">
+      <form role="form" id="add_auth_menu" action="{:U('taskResult')}" method="post" class="form-mytask">
+      <input type="hidden" name="id" value="{$resu.id}">
+      <input type="hidden" name="task_id" value="{$info.id}">
+      <h2 style="text-align: center;font-weight: bold;">工程项目反馈/任务书</h2>
+          <table class="table table-bordered" style="text-align: left;">
+            <tbody>
+              <tr>
+                <th>项目名称</th>
+                <td>{$info.title}</td>
+                <th>反馈类型</th>
+                <td>{$info.type}</td>
+              </tr>
+              <tr>
+                <th>反馈时间</th>
+                <td>{$info.startdt|time_format='Y-m-d'}</td>
+                <th>申请人</th>
+                <td>{$info.applyid|get_nickname}</td>
+              </tr>
+              <tr>
+                <th>要求完成时间</th>
+                <td>{$info.enddt|time_format='Y-m-d'}</td>
+                <th>任务审核（领导）</th>
+                <td>{$info.leaderid|Get_leader_names} <if condition="$info['t_status'] EQ 0">{$info.t_status|task_Meaning}</if></td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <div style="font-weight: bold;margin-bottom: 15px;clear: both;">任务说明</div>
+                  {$info.content|nl2br}
+                  <div style="text-align: right;margin-top: 15px;">
+                  任务接收人：{$resu.uid|get_nickname} <span id="gettask_time" style="margin-left: 20px;">日期：{$resu.gettask_time|time_format}</span></div>
+                </td>
+              </tr>
+              <tr class="task_resu">
+                <td colspan="4">
+                  <div style="margin-bottom: 5px;clear: both;font-weight: bold;">改进结果：（简单说明没有改进的，为什么？）</div>
+                  <div class="form-group">
+                    <textarea name="resu_content" class="form-control" rows="5">{$resu.resu_content}</textarea>
+                  </div>
+                  <!-- <div style="text-align: right;margin-top: 15px;">确定人（主管）：<span style="margin-left: 20px;">日期：</span></div> -->
+                </td>
+              </tr>
+              <tr class="task_resu">
+                <td colspan="4">
+                  <div style="margin-bottom: 5px;clear: both; font-weight: bold;">其他说明：</div>
+                  <div class="form-group">
+                    <textarea name="other_content" class="form-control" rows="2">{$resu.other_content}</textarea>
+                  </div>
+                </td>
+              </tr>
+              <tr class="task_resu">
+              <td colspan="2" style="vertical-align:middle;">PCB文件是否有更新：</td>
+                <td colspan="2">
+                  <div class="form-group" style="margin-bottom: 0px;">
+                    <select name="pcb_update" id="pcb_update" class="form-control">
+                        <option value="">-请选择-</option>
+                        <option value="有更新" <if condition="$resu['pcb_update'] EQ '有更新'">selected="selected"</if>>有更新</option>
+                        <option value="无更新" <if condition="$resu['pcb_update'] EQ '无更新'">selected="selected"</if>>无更新</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr class="task_resu">
+              <td colspan="2" style="vertical-align:middle;">程序文件是否有更新：</td>
+                <td colspan="2">
+                  <div class="form-group" style="margin-bottom: 0px;">
+                    <select name="software_update" id="software_update" class="form-control">
+                        <option value="">-请选择-</option>
+                        <option value="有更新" <if condition="$resu['software_update'] EQ '有更新'">selected="selected"</if>>有更新</option>
+                        <option value="无更新" <if condition="$resu['software_update'] EQ '无更新'">selected="selected"</if>>无更新</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr class="task_resu">
+              <td colspan="2" style="vertical-align:middle;">生产文件是否有更新：</td>
+                <td colspan="2">
+                  <div class="form-group" style="margin-bottom: 0px;">
+                    <select name="product_update" id="product_update" class="form-control">
+                        <option value="">-请选择-</option>
+                        <option value="有更新" <if condition="$resu['product_update'] EQ '有更新'">selected="selected"</if>>有更新</option>
+                        <option value="无更新" <if condition="$resu['product_update'] EQ '无更新'">selected="selected"</if>>无更新</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+<!--               <tr class="task_resu">
+                <th>归档确定人： </th>
+                <td></td>
+                <th>归档日期：</th>
+                <td></td>
+              </tr> -->
+            </tbody>
+            </table>
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick="CloseModal(this)"><i class="iconfont">&#xe619;</i> 关 闭 </button>
+        <button type="submit" url-type="{:I('get.jur')}" class="btn btn-danger ajax-post task_resu" id="submit" target-form="form-mytask"><i class="iconfont">&#xe60a;</i> 保 存 </button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+  $(function(){
+    $('#myModal').modal('toggle');
+  });
+</script>
+</div>

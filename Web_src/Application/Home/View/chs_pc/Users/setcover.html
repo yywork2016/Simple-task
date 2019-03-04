@@ -1,0 +1,87 @@
+<div class="modal fade bs-example-modal-sm" id="setcover" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" onclick="CloseModal(this)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" style="line-height: 20px;" id="myModalLabel">修改头像</h4>
+      </div>
+      <div class="modal-body" style="min-height: 280px;position: relative;">
+
+        <form role="form" action="{:U('Users/setcover')}" method="post" class="form-setcover">     
+          <style>
+          #clipArea {width: 270px; height: 270px;display: none;}
+          #clickfile{position: absolute;left: 50%;margin-left: -40px;top: 50%; margin-top: -15px;}
+          .a-upload{width: 0px;height: 0px;opacity: 0;}
+          #submit,#clipBtn{display: none;}
+          #txtpic{font-size: 12px;color: #F00; display: none;}
+          #view{width: 262px; height: 262px;border:4px solid #F2DEDE;margin:0 auto;display: none;}
+          </style>
+          <div id="txtpic">*鼠标滑轮控制大小</div>
+          <button type="button" class="btn btn-success" id="clickfile">选择头像</button>
+          <div class="a-upload"><input type="file" id="imgfile"></div>
+          <div id="clipArea"></div>
+          <div id="view"></div>
+          <input type="hidden" name="coverdata"  id="coverdata">   
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick="CloseModal(this)"><i class="iconfont">&#xe619;</i> 关 闭 </button>
+        <button type="submit" url-type="{:I('get.jur')}" class="btn btn-danger ajax-post no-refresh" id="submit" target-form="form-setcover"><i class="iconfont">&#xe60a;</i> 保 存 </button>
+        <button type="button" class="btn btn-success" id="clipBtn"><i class="iconfont">&#xe60a;</i> 截 取 </button>
+      </div>
+    </div>
+  </div>
+<!-- <script src="js/jquery-3.1.1.min.js"></script> -->
+<script src="__STATIC__/photoclip/iscroll-zoom.js"></script>
+<script src="__STATIC__/photoclip/hammer.js"></script>
+<script src="__STATIC__/photoclip/lrz.all.bundle.js"></script>
+<script src="__STATIC__/photoclip/PhotoClip.js"></script>
+<script>
+  $(function(){
+    // 弹出层
+    $('#setcover').modal('toggle');
+  });
+$("#clickfile").click(function(){
+  $("#imgfile").click();
+});
+
+$(".a-upload").on("change","input[type='file']",function(){
+    var filePath=$(this).val();
+    if(filePath.indexOf("jpg")!=-1 || filePath.indexOf("png")!=-1 || filePath.indexOf("gif")!=-1){
+        $("#clipArea,#txtpic,#clipBtn").show();
+        $("#clickfile").hide();
+    }else{
+        updateAlert("您未上传文件，或者您上传文件类型有误！",'alert-error');
+        return false 
+    }
+})
+
+// $("#clipBtn").click(function(){
+
+// });
+
+var clipArea = new PhotoClip("#clipArea", {
+  size: [260, 260],
+  outputSize: [500, 500],
+  file: "#imgfile",
+  // img: "img/mm.jpg",
+  view: "#view",
+  ok: "#clipBtn",
+  loadStart: function() {
+    console.log("照片读取中");
+  },
+  loadComplete: function() {
+    console.log("照片读取完成");
+  },
+  clipFinish: function(dataURL) {
+    // console.log(dataURL);
+    $("#coverdata").val(dataURL);
+    $("#clipArea,#txtpic,#clipBtn").hide();
+    $("#submit,#view").show();
+  }
+});
+//clipArea.destroy(); // 销毁
+// clipArea.setImg("img/mm.jpg");
+</script>
+</div>

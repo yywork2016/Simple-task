@@ -1,0 +1,16 @@
+<volist name="tree" id="val">
+<tr>
+  <td><input class="ids row-selected" name="ids[]" value="{$val.id}" type="checkbox"></td>
+  <td>{$val.id}</td>
+  <td><if condition="$val['pidname'] NEQ '-'">└─</if> {$val.title}</td>
+  <td>{$val.pidname}</td>
+  <td>{$val.sort}</td>
+  <td>{:status_Meaning($val['status'])}</td>
+  <td> 
+    <a title="编辑" href="javascript:addModal('{:U('edit?id='.$val['id'])}');">编辑</a>
+    <a class="confirm ajax-get" title="删除" href="{:U('setStatus?status=-1&ids='.$val['id'])}">删除</a></td>
+</tr>
+<notempty name="val['_']">
+  {:R('Group/tree', array($val['_']))}
+</notempty>
+</volist>

@@ -1,0 +1,157 @@
+	<div class="main-title">
+		<h2>系统设置</h2>
+	</div>
+	<div class="clearfix"></div>
+		<div class="tab-wrap">
+		<ul class="nav nav-tabs">
+		<volist name="Think.config.CONFIG_GROUP_LIST" id="group">
+
+			<li <eq name="id" value="$key">class="active"</eq>><a href="javascript:getNextMainContent('{:U('?id='.$key)}');">{$group}配置</a></li>
+
+		</volist>
+		</ul>
+		<div class="tab-content">
+	<form action="{:U('save')}" method="post" class="form-horizontal">
+	<volist name="list" id="config">
+		<div class="form-group">
+			<label class="item-label">{$config.title}<span class="check-tips">（{$config.remark}）</span> </label>
+			<div class="controls">
+			<switch name="config.type">
+			<case value="0">
+			<input type="text" class="form-control input-small" name="config[{$config.name}]" value="{$config.value}">
+			</case>
+			<case value="1">
+			
+			<!-- 应用与任务配置 -->
+			<if condition="$config['id'] elt 47 AND $config['id'] egt 45">
+				<div class="input-group input-large">
+			    <input type="text" value="{:isset($config['value'])?Get_leader_names($config['value']):''}" name="{$config.name}" id="{$config.name}" class="form-control input-large" readonly>
+			    <input type="hidden" name="config[{$config.name}]" id="config{$config.name}" value="{:isset($config['value'])?$config['value']:''}">
+			    <span class="input-group-btn">
+			        <button class="btn btn-default deltime" type="button"><span class="glyphicon glyphicon-remove"></span></button>
+			        <button class="btn btn-default getuser" type="button" type-id="checkbox" data-value="config{$config.name}" data-backname="{$config.name}" url="{:U('Users/getUser_dept')}" data-name="{$config.title}" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon-user"></span></button>
+			      </span>
+			    </div>
+			<else/>
+				<input type="text" class="form-control input-large" name="config[{$config.name}]" value="{$config.value}">
+			</if>
+			</case>
+			<case value="2">
+				<textarea name="config[{$config.name}]" class="form-control input-large">{$config.value}</textarea>
+			</case>
+			<case value="3">
+				<textarea name="config[{$config.name}]" class="form-control input-large">{$config.value}</textarea>
+			</case>
+			<case value="4">
+			<select name="config[{$config.name}]" class="form-control input-small">
+				<volist name=":parse_config_attr($config['extra'])" id="vo">
+					<option value="{$key}" <eq name="config.value" value="$key">selected</eq>>{$vo}</option>
+				</volist>
+			</select>
+			</case>
+			<case value="5">
+				 <div class="controls">
+
+                    <input type="file" id="upload_picture_{$config.name}">
+
+                    <input type="hidden" name="config[{$config.name}]" id="cover_id_{$config.name}" value="{$config.value}"/>
+
+                    <div class="upload-img-box">
+
+                    <notempty name="config.value">
+
+                        <div class="upload-pre-item"><img src="{$config.value|get_cover='path'}"/></div>
+
+                    </notempty>
+
+                    </div>
+
+                </div>
+
+                <script type="text/javascript">
+
+                //上传图片
+
+                /* 初始化上传插件 */
+
+                $("#upload_picture_{$config.name}").uploadify({
+
+                    "height"          : 30,
+
+                    "swf"             : "__STATIC__/uploadify/uploadify.swf",
+
+                    "fileObjName"     : "download",
+
+                    "buttonText"      : "上传图片",
+
+                    "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+
+                    "width"           : 120,
+
+                    'removeTimeout'	  : 1,
+
+                    'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
+
+                    "onUploadSuccess" : uploadPicture{$config.name},
+
+                    'onFallback' : function() {
+
+                        alert('未检测到兼容版本的Flash.');
+
+                    }
+
+                });
+
+                function uploadPicture{$config.name}(file, data){
+
+                    var data = $.parseJSON(data);
+
+                    var src = '';
+
+                    if(data.status){
+
+                        $("#cover_id_{$config.name}").val(data.id);
+
+                        src = data.url || '__ROOT__' + data.path
+
+                        $("#cover_id_{$config.name}").parent().find('.upload-img-box').html(
+
+                            '<div class="upload-pre-item"><img src="' + src + '"/></div>'
+
+                        );
+
+                    } else {
+
+                        updateAlert(data.info);
+
+                        setTimeout(function(){
+
+                            $('#top-alert').find('button').click();
+
+                            $(that).removeClass('disabled').prop('disabled',false);
+
+                        },1500);
+
+                    }
+
+                }
+
+                </script>
+
+			</case>
+			</switch>
+				
+			</div>
+		</div>
+		</volist>
+		<div class="form-group">
+			<label class="item-label"></label>
+			<div class="controls">
+				<empty name="list"><button type="submit" disabled class="btn btn-danger disabled buttonwide" target-form="form-horizontal">确 定</button><else/><button type="submit" class="btn btn-danger ajax-post buttonwide" target-form="form-horizontal">确 定</button></empty>
+				
+				<!-- <button class="btn btn-return btn-default buttonwide" onclick="javascript:history.back(-1);return false;">返 回</button> -->
+			</div>
+		</div>
+	</form>
+			</div>
+	</div>

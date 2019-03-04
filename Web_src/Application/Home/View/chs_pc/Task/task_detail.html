@@ -1,0 +1,196 @@
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" onclick="CloseModal(this)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">【任务】{$info.title}</h4>
+      </div>
+      <style type="text/css">
+        .in{display: none;}
+        .word-in{}
+        .word-in .on{display: none;}
+        .word-in .in{display:inline-block;}
+        <if condition="$info['t_status'] LT 1">.task_resu{display:none;}</if>
+      </style>
+      <div class="modal-body" id="modal-body">
+      <form role="form" id="add_auth_menu" action="{:U('get_Mytask')}" method="post" class="form-mytask">
+      <input type="hidden" name="task_id" value="{$info.id}">
+      <input type="hidden" name="id" value="{$resu.id}">
+      <h2 style="text-align: center;font-weight: bold;">工程项目反馈/任务书</h2>
+          <table class="table table-bordered" style="text-align: left;">
+            <tbody>
+              <tr>
+                <th>项目名称</th>
+                <td>{$info.title}</td>
+                <th>反馈类型</th>
+                <td>{$info.type}</td>
+              </tr>
+              <tr>
+                <th>反馈时间</th>
+                <td>{$info.startdt|time_format='Y-m-d'}</td>
+                <th>申请人</th>
+                <td>{$info.applyid|get_nickname}</td>
+              </tr>
+              <tr>
+                <th>要求完成时间</th>
+                <td>{$info.enddt|time_format='Y-m-d'}</td>
+                <th>任务审核（领导）</th>
+                <td>{:isset($info['pass_leader_uid'])?Get_leader_names($info['pass_leader_uid']):''} 
+                <if condition="TF_explode_value(UID,$info['leaderid']) EQ true AND $info['t_status'] LT 1 AND $info['pass_leader_uid'] EQ NULL"><a class="btn btn-success btn-sm" href="javascript:addModal('{:U('Task/examine',array('id'=>$info['id'],'jur'=>$jur))}');">审批</a>  </if>
+                <if condition="$info['t_status'] LT 1"><em style="font-size: 12px;color: #999;">（待审批）</em></if>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <div style="font-weight: bold;margin-bottom: 15px;clear: both;">任务说明</div>
+                  {$info.content|nl2br}
+                  <if condition="$info['file_id'] NEQ null">
+                  <div class="upload-img-box">
+                  <volist name="files" id="file">
+                  <div class="upload-pre-file"><span class="upload_icon_all"></span><a href="{:U('File/download',array('id'=>$file))}">{:get_file($file,'name')}</a></div>
+                  </volist>
+                  </div>
+                  </if>
+                  <if condition="$info['reason'] NEQ ''">
+                  <div style="border-radius: 3px;border:1px solid #eee; margin: 20px 0;padding: 10px;border-left: 5px solid #F2DEDE;">
+                  <h4 style="margin:0;padding:0;font-size: 14px;font-weight: bold;color: #843534;">任务审核备注：</h4>
+                  {$info.reason|nl2br}
+                  <span style="display: block;font-size: 12px;color: #999;">{$info.pass_time|time_format}</span>
+                  </div>
+                  </if>
+                  <notempty name="resu_list">
+                  <hr>
+                  <volist name="resu_list" id="resu">
+                  <div style="text-align: right;<if condition="$key EQ 0">margin-top: 15px;</if>">
+                  任务接收人：{$resu.uid|get_nickname} <span id="gettask_time" style="margin-left: 20px;"><if condition="$resu['gettask_time'] NEQ NULL">接收日期：{$resu.gettask_time|time_format='Y-m-d'}</if></span></div>
+                  </volist>
+                  </notempty>
+                </td>
+              </tr>
+              <volist name="resu_list" id="resu">
+              <notempty name="resu['resu_content']">
+              <tr class="task_resu"><td colspan="4" class="alert-info">
+              <span style="font-weight: bold;">反馈人：</span>{$resu.uid|get_nickname}
+              <span style="float: right;">反馈时间：{$resu.resu_time|time_format}</span>
+              </td></tr>
+              <tr class="task_resu">
+                <td colspan="4">
+                  <div style="margin-bottom: 5px;clear: both;font-weight: bold;">改进结果：（简单说明没有改进的，为什么？）</div>
+
+                  <blockquote style=" border:1px solid #eee;border-left-color: #F2DEDE;border-left-width: 5px;
+border-radius: 3px;">
+                    <p style="font-size: 14px;">{$resu.resu_content|nl2br}</p>
+                  </blockquote>
+
+                  <if condition="(TF_explode_value(UID,$info['testman']) OR $info['applyid'] EQ UID OR $resu['uid'] EQ UID) AND $resu['t_status'] NEQ 4">   
+                  <hr>
+                  <button type="button" class="btn btn-success right" onclick="addModal('{:U('Task/task_test',array('id'=>$resu['id'],'jur'=>$jur))}')">
+                    确认（测试）反馈结果
+                  </button>  
+                  </if>
+                </td>
+              </tr>
+              <tr class="task_resu">
+                <td colspan="4">
+                  <div style="margin-bottom: 5px;clear: both;font-weight: bold;">其他说明：</div>
+                  <div class="form-group">
+                  <blockquote style=" border:1px solid #eee;border-left-color: #F2DEDE;border-left-width: 5px;
+border-radius: 3px;">
+                    <p style="font-size: 14px;">{$resu.other_content|nl2br}</p>
+                  </blockquote>                    
+                  </div>
+                </td>
+              </tr>
+              <tr class="task_resu">
+              <td colspan="2" style="vertical-align:middle;">PCB文件是否有更新：</td>
+                <td colspan="2">
+                  <div class="form-group" style="margin-bottom: 0px;">
+                    {$resu.pcb_update}
+                  </div>
+                </td>
+              </tr>
+              <tr class="task_resu">
+              <td colspan="2" style="vertical-align:middle;">程序文件是否有更新：</td>
+                <td colspan="2">
+                  <div class="form-group" style="margin-bottom: 0px;">
+                    {$resu.software_update}
+                  </div>
+                </td>
+              </tr>
+              <tr class="task_resu">
+              <td colspan="2" style="vertical-align:middle;">生产文件是否有更新：</td>
+                <td colspan="2">
+                  <div class="form-group" style="margin-bottom: 0px;">
+                    {$resu.product_update}
+                  </div>
+                </td>
+              </tr>
+              <notempty name="resu['_']">
+              <tr><td colspan="4">               
+
+                    <table class="table table-bordered">
+                    <thead><tr style="background-color: #F7F7F9;"><th>ID</th><th>确定人（主管）</th><th>状态</th><th>备注</th><th>日期</th></thead></tr></thead>
+                    <tbody>
+                      <volist name="resu['_']" id="val">
+                      <tr><td>{$key+1}</td>
+                      <td>{$val.testman_uid|get_nickname}</td>
+                      <td><if condition="$val['test_status'] EQ 1">通过<else/>不通过</if></td>
+                      <td>{$val.test_content}</td>
+                      <td>{$val.test_time|time_format}</td>
+                      </tr>
+                      </volist>
+                      </tbody>
+                      </table>
+                  
+              </td></tr>
+              </notempty>
+              </notempty>
+              </volist>
+              <if condition="$info['t_status'] EQ 6">
+              <tr class="task_resu">
+                <th>归档确定人： </th>
+                <td>{$info.pass_fileman_uid|get_nickname}</td>
+                <th>归档日期：</th>
+                <td>{$info.pass_file_time|time_format}</td>
+              </tr>
+              <else/>
+              <if condition="TF_explode_value(UID,C('FILE_MANS')) EQ true AND $info['t_status'] EQ 5">
+              <tr>
+                <td colspan="4">
+                  <button type="button" class="btn btn-success ajax-get right confirm" url="{:U('Task/Todofile?id='.$info['id'])}">
+                    确定归档
+                  </button>  
+                </td>
+              </tr>
+              </if>
+              </if>
+            </tbody>
+            </table>
+            </form>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-danger" style="float: left;" onclick="printTask()"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> 打印 </button> -->
+        <button type="button" class="btn btn-danger" url="{:U('downloadWord',array('id'=>$info['id']))}" style="float: left;" onclick="ToWord(this)"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> <span class="on">导出Word </span><span class="in">Word导出中···</span></button>
+        <button type="button" class="btn btn-default" onclick="CloseModal(this)"><i class="iconfont">&#xe619;</i> 关 闭 </button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+  $(function(){
+    $('#myModal').modal('toggle');
+  });
+
+function printTask(){
+  document.getElementById("modal-body").printArea();
+}
+
+function ToWord(me){
+  var url=$(me).attr('url');
+  $(me).addClass("word-in").attr("disabled", true);
+  setTimeout(function(){
+    $(me).removeClass("word-in").attr("disabled", false);
+  },5500);
+  location.href=url;
+}
+</script>
+</div>

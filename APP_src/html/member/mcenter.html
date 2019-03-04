@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>CHS</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+
+</head>
+<body>
+<div id="member-header">
+	<div class="cover-img"><img src="../../image/cover.jpg" id="el_cover"></div>
+	<div class="member-info" onclick="cover_clip()">
+		<h1 id="username">车厘子电子科技</h1>
+		<h3 id="jobsanddep">专业DSP研发   |   服务商</h3>
+		<i class="aui-iconfont aui-icon-right"></i>
+	</div>
+</div>
+
+<div class="aui-content aui-margin-b-15 task-member-list">
+    <ul class="aui-list aui-list-in">
+    <li class="aui-list-header" style="height: 15px;"></li>
+        <li class="aui-list-item aui-list-item-middle" onclick="Toindex(0)">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">最新任务</div>
+                <div class="aui-list-item-right">
+                    <div class="aui-badge" id="newtask" style="position:relative;top:0; left:0">0</div>
+                </div>
+        </li>
+        <li class="aui-list-item"  onclick="Toindex(1)">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">进行中任务</div>
+                <div class="aui-list-item-right">
+                    <div class="aui-badge" id="doingtask" style="position:relative;top:0; left:0">0</div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item"  onclick="Toindex(2)">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">已完成任务</div>
+                <div class="aui-list-item-right">
+                    <div class="aui-badge" id="donetask" style="position:relative;top:0; left:0">0</div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-header" style="height: 15px;"></li>
+        <li class="aui-list-item" onclick="Editmember()">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title"><i class="aui-iconfont aui-icon-cert" style="font-size: 18px;"></i> 个人资料</div>
+            </div>
+        </li>
+        <li class="aui-list-item" onclick="Editpwd()">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title"><i class="aui-iconfont aui-icon-lock" style="font-size: 18px;"></i> 修改密码</div>
+            </div>
+        </li>
+        <li class="aui-list-header" style="height: 15px;"></li>
+        <li class="aui-list-item" onclick="Logout()">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title"><i class="aui-iconfont aui-icon-forward" style="font-size: 16px;"></i> 退出登陆</div>
+            </div>
+        </li>
+    </ul>
+</div>
+<div  id="aimm"></div>
+</body>
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+	apiready = function () {
+        
+	    //监听向右滑动关闭当前页
+	    api.addEventListener({
+	        name:'swiperight'
+	    }, function(ret, err){        
+	        api.closeWin();
+	    });
+
+        getMemberinfo();
+      
+        // }
+
+    }
+
+    function getNewCover(){
+        var imgcover=$api.byId("el_cover");
+        api.ajax({
+                url: OpenAPI.getCover,
+                method: 'post',
+                dataType: 'JSON',
+            }, function(ret, err) {
+                if (ret) {
+                    $api.attr(imgcover,'src',ret.cover);    
+                } else {
+                    api.alert({ msg: JSON.stringify(err) });
+                }
+            });
+    }
+
+    function getMemberinfo(){
+        // 开始加载
+        api.showProgress();
+
+        var username=$api.byId("username");
+        var man='<span class="man"></span>';
+        var femen='<span class="femen"></span>';
+        var usn='';
+        var imgcover=$api.byId("el_cover");
+        var dep=$api.byId("jobsanddep");
+
+        // $api.rmStorage('memberinfo');
+
+        // var resu=$api.getStorage('memberinfo');
+        // if(resu != null || resu!='undefined' || resu!=''){
+        //     $api.html(username, resu.sex);
+        //     $api.html(dep,resu.jobss);
+        //     $api.attr(imgcover,'src',resu.imgcover);
+        //     // 加载结束
+        //     api.hideProgress();
+        // }else{        
+            // 获取服务器个人信息
+            api.ajax({
+                url: OpenAPI.memberinfo,
+                method: 'post',
+                dataType: 'JSON',
+            }, function(ret, err) {
+                if (ret) {
+                    CheckLogin(ret.loginout);
+                    if(ret.sex==1){
+                        usn=ret.nickname+man;
+                    }else{
+                        usn=ret.nickname+femen;
+                    }
+                    var jobss=ret.jobs+" <span>|</span> "+ret.depet;
+                    $api.html(username, usn);
+                    $api.html(dep,jobss);
+                    $api.attr(imgcover,'src',ret.cover);
+                    $api.text($api.byId('newtask'),ret.newtask);
+                    $api.text($api.byId('doingtask'),ret.doingtask);
+                    $api.text($api.byId('donetask'),ret.donetask);
+                    // 数据存储在本地
+                    // var memberinfo={};
+                    // memberinfo.sex=usn;
+                    // memberinfo.jobss=jobss;
+                    // memberinfo.imgcover=ret.cover;
+                    // $api.setStorage('memberinfo', memberinfo);
+                    // 加载结束
+                    api.hideProgress();
+                } else {
+                    api.alert({ msg: JSON.stringify(err) });
+                }
+            });
+    }
+
+
+    function Editmember(){ 
+        api.openWin({
+        	name: 'editmember',
+        	url: 'editmember.html'
+        })
+    }
+
+    function Editpwd(){
+        api.openWin({
+            name: 'editpwd',
+            url: 'editpwd.html'
+        })
+    }
+    
+    function cover_clip(){
+        api.openWin({
+            name:"cover_clip",
+            url:"cover_clip.html"
+        })
+    }
+
+    function Toindex(page){
+        api.execScript({
+            name: 'homeSlide',
+            script: 'tabpage('+page+');'
+        });
+        api.closeWin({name:"member"});
+    }
+
+
+</script>
