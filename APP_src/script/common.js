@@ -3,7 +3,7 @@ var token=$api.getStorage('token');
 var uid=$api.getStorage('uid');
 var nickname=$api.getStorage('nickname');
 //配置服务器获取数据地址
-var mainurl="http://task.dsp86.com/index.php?s=";
+var mainurl="http://此处为IP或域名地址/index.php?s=";
 var gettoken="/token/"+token;
 var OpenAPI = {
 "login":mainurl + "/Public/login", //登陆接口
